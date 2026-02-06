@@ -24,3 +24,6 @@ replication packages associated with the following papers:
   *Replication Data for: War of the Waves: Radio and Resistance during World War II*.  
   American Economic Association / ICPSR.  
   https://doi.org/10.3886/E111901V1
+
+Place the original `.dta` files in this directory using the filenames expected 
+by the scripts.
