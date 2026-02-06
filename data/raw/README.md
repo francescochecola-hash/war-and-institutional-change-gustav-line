@@ -14,15 +14,15 @@ replication packages associated with the following papers:
   Replication data obtained from the authors’ replication package, available
   as Supplementary Data to the published article.
 
-- Gagliarducci, S., Onorato, M. G., Sobbrio, F., and Tabellini, G. (2020).  
-  *War of the Waves: Radio and Resistance during World War II*.  
-  **American Economic Journal: Applied Economics**, 12(4), 1–38.  
+- **Gagliarducci, S., Onorato, M. G., Sobbrio, F., and Tabellini, G. (2020)**  
+  *War of the Waves: Radio and Resistance during World War II*  
+  American Economic Journal: Applied Economics, 12(4), 1–38  
   https://doi.org/10.1257/app.20190410
 
   Replication data:  
-  Gagliarducci, S., Onorato, M. G., Sobbrio, F., and Tabellini, G. (2020).  
-  *Replication Data for: War of the Waves: Radio and Resistance during World War II*.  
-  American Economic Association / ICPSR.  
+  **Gagliarducci, S., Onorato, M. G., Sobbrio, F., and Tabellini, G. (2020)**  
+  *Replication Data for: War of the Waves: Radio and Resistance during World War II*  
+  American Economic Association / ICPSR  
   https://doi.org/10.3886/E111901V1
 
 The datasets listed above are used as raw inputs for the analysis pipeline.
