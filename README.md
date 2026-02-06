@@ -1,4 +1,4 @@
-# War and Institutional Change: The Case of the Gustav Line
+# War and Institutional Change: The Case of Gustav Line
 
 This repository contains data, tables, and reproducible analysis supporting
 the thesis **"War and Institutional Change: The Case of the Gustav Line"**.
