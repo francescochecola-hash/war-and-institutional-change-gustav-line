@@ -50,3 +50,6 @@ rsconnect/
 
 # Raw data (not tracked)
 data/raw/*.dta
+
+# Processed data (not tracked)
+data/processed/*.rds
