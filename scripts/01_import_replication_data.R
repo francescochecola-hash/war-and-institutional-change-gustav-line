@@ -2,7 +2,7 @@
 # Francesco Checola
 # War and Institutional Change: The Case of Gustav Line
 #
-# Script: 01_import.R
+# Script: 01_import_replication_data.R
 # Purpose: Import raw Stata datasets (.dta) and save them as R versions (.rds)
 #          in the folder "data/processed/"
 # Output:  data/processed/*.rds
