@@ -27,5 +27,22 @@ replication packages associated with the following papers:
 
 The datasets listed above are used as raw inputs for the analysis pipeline.
 
-Place the original `.dta` files in this directory using the filenames expected 
+Place the original `.dta` files in this directory using the filenames expected
 by the scripts.
+
+---
+
+## Italian Institutional Referendum (1946)
+
+Municipality-level results of the Italian institutional referendum held in 1946.
+These data provide the main outcome variable used in the empirical analysis.
+
+The original dataset is distributed as a plain text file (.txt) and is not
+included in this repository.
+
+Users interested in replication should obtain the dataset from the original
+source and place the file in this directory using the filename expected by the
+import script.
+
+Source: Italian Ministry of the Interior (Ministero dell’Interno).  
+https://elezionistorico.interno.gov.it/eligendo/opendata.php
