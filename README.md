@@ -15,7 +15,7 @@ the thesis **"War and Institutional Change: The Case of Gustav Line"**.
 └── LICENSE
 ```
 
-# Raw data
+## Raw data
 
 The analysis is based on replication datasets from the following studies:
 
@@ -33,5 +33,10 @@ In addition, the analysis uses municipality-level results from the Italian
 institutional referendum of 1946, which constitute the main outcome variable
 in the empirical analysis.
 
+The project also relies on geographic data processed in QGIS, including
+municipality boundaries as of 2001 and distance measures from each municipality
+to the nearest municipality located along the Gustav Line.
+
 Raw data are not included in this repository. Detailed information on data
-sources and access instructions is provided in `data/raw/README.md`.
+sources, access instructions, and GIS preprocessing steps is provided in
+`data/raw/README.md`.
