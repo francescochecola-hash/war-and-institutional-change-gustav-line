@@ -19,7 +19,7 @@ the thesis **"War and Institutional Change: The Case of Gustav Line"**.
 
 The analysis is based on replication datasets from the following studies:
 
-- **Fontana, G., Nannicini, T., and Tabellini, G. (2023)**  
+- **Fontana, N., Nannicini, T., and Tabellini, G. (2023)**  
   *Historical roots of political extremism: The effects of Nazi occupation of Italy*  
   Journal of Comparative Economics, 51(3), 723–743  
   https://doi.org/10.1016/j.jce.2023.05.006
@@ -28,6 +28,10 @@ The analysis is based on replication datasets from the following studies:
   *War of the Waves: Radio and Resistance during World War II*  
   American Economic Journal: Applied Economics, 12(4), 1–38  
   https://doi.org/10.1257/app.20190410
+
+In addition, the analysis uses municipality-level results from the Italian
+institutional referendum of 1946, which constitute the main outcome variable
+in the empirical analysis.
 
 Raw data are not included in this repository. Detailed information on data
 sources and access instructions is provided in `data/raw/README.md`.
