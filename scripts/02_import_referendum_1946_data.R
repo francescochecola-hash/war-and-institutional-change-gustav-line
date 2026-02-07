@@ -3,7 +3,7 @@
 # War and Institutional Change: The Case of Gustav Line
 #
 # Script: 02_import_referendum_1946_data.R
-# Purpose: Import raw Italian institutional referendum data and save them
+# Purpose: Import raw Italian institutional referendum data (.txt) and save them
 #          as R versions (.rds) in the folder "data/processed/"
 # Output:  data/processed/referendum_1946.rds
 # Notes:   Raw data are intentionally excluded from the repository (see .gitignore)
@@ -39,7 +39,7 @@ df <- read_delim(
   locale = locale(encoding = "UTF-8")
 )
 
-# Clean column names
+# Clean (and standardize) variables' names
 names(df) <- names(df) |>
   str_to_lower() |>
   str_replace_all("[^a-z0-9]+", "_") |>
