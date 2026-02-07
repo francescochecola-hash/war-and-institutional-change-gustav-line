@@ -6,7 +6,7 @@ This project relies on replication data from previously published studies.
 To reproduce the analysis, users must obtain the original datasets from the
 replication packages associated with the following papers:
 
-- **Fontana, G., Nannicini, T., and Tabellini, G. (2023)**  
+- **Fontana, N., Nannicini, T., and Tabellini, G. (2023)**  
   *Historical roots of political extremism: The effects of Nazi occupation of Italy*  
   Journal of Comparative Economics, 51(3), 723–743  
   https://doi.org/10.1016/j.jce.2023.05.006
