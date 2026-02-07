@@ -19,7 +19,7 @@ the thesis **"War and Institutional Change: The Case of Gustav Line"**.
 
 The analysis is based on replication datasets from the following studies:
 
-- **Fontana, G., Nannicini, T., and Tabellini, G. (2023)**  
+- **Fontana, N., Nannicini, T., and Tabellini, G. (2023)**  
   *Historical roots of political extremism: The effects of Nazi occupation of Italy*  
   Journal of Comparative Economics, 51(3), 723–743  
   https://doi.org/10.1016/j.jce.2023.05.006
