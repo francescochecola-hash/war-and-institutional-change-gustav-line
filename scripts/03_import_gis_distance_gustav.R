@@ -56,4 +56,4 @@ out_path <- file.path("data/processed", "gustav_distance.rds")
 saveRDS(df, out_path)
 message("Saved to:  ", out_path)
 
-message("gustav_distance.rds imported successfully.")
+message("comuni_2001_dist_gustav.gpkg imported successfully.")
