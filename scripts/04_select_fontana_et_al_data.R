@@ -20,7 +20,7 @@ suppressPackageStartupMessages({
 file_sample <- "data/processed/replication_data_sample_analysis.rds"
 file_additional <- "data/processed/replication_data_additional_data.rds"
 
-# Check that the input files exist
+# Check that the input files exist before proceeding
 if (!file_exists(file_sample)) {
   stop(paste("Missing input file:", file_sample))
 }
