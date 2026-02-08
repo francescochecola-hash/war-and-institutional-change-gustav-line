@@ -61,4 +61,4 @@ out_path <- file.path("data/processed", "gustav_distance_2001.rds")
 saveRDS(df, out_path)
 message("Saved to:  ", out_path)
 
-message("GIS (Gustav Line distance) dataset imported successfully.")
+message("Gustav Line distance dataset imported successfully.")
