@@ -96,9 +96,9 @@ message("Additional data — Rows: ", nrow(df_additional_sel),
 # Combine selected variables (by ISTAT code of municipalities as of 2001)
 # ------------------------------------------------------------------------------
 
-df_selected <- df_sample_sel |>
+df_selected <- df_additional_sel |>
   left_join(
-    df_additional_sel,
+    df_sample_sel,
     by = c("cod_istat103", "name", "province103", "region103")
   )
 
