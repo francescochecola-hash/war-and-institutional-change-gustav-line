@@ -57,8 +57,8 @@ message("Key variables: ",
         "nearest_gustav_municipality, dist_gustav_m, dist_gustav_km")
 
 # Save processed dataset
-out_path <- file.path("data/processed", "gustav_distance_2001.rds")
+out_path <- file.path("data/processed", "gustav_distance.rds")
 saveRDS(df, out_path)
 message("Saved to:  ", out_path)
 
-message("Gustav Line distance dataset imported successfully.")
+message("gustav_distance.rds dataset imported successfully.")
