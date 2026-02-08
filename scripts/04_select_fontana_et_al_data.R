@@ -16,10 +16,7 @@ suppressPackageStartupMessages({
   library(dplyr)    # data manipulation and variable construction
 })
 
-# ------------------------------------------------------------------------------
 # Load replication datasets from "data/processed/"
-# ------------------------------------------------------------------------------
-
 file_sample <- "data/processed/replication_data_sample_analysis.rds"
 file_additional <- "data/processed/replication_data_additional_data.rds"
 
@@ -37,10 +34,7 @@ df_sample <- readRDS(file_sample)
 message("Loading: ", file_additional)
 df_additional <- readRDS(file_additional)
 
-# ------------------------------------------------------------------------------
 # Select variables from replication_data_sample_analysis
-# ------------------------------------------------------------------------------
-
 df_sample_sel <- df_sample |>
   select(
     name,
@@ -74,10 +68,7 @@ df_sample_sel <- df_sample |>
 message("Sample analysis data — Rows: ", nrow(df_sample_sel),
         " | Columns: ", ncol(df_sample_sel))
 
-# ------------------------------------------------------------------------------
 # Select variables from replication_data_additional_data
-# ------------------------------------------------------------------------------
-
 df_additional_sel <- df_additional |>
   select(
     name,
@@ -92,10 +83,7 @@ df_additional_sel <- df_additional |>
 message("Additional data — Rows: ", nrow(df_additional_sel),
         " | Columns: ", ncol(df_additional_sel))
 
-# ------------------------------------------------------------------------------
 # Combine selected variables (by ISTAT code of municipalities as of 2001)
-# ------------------------------------------------------------------------------
-
 df_selected <- df_additional_sel |>
   left_join(
     df_sample_sel,
@@ -105,10 +93,7 @@ df_selected <- df_additional_sel |>
 message("Merged Fontana et al. dataset — Rows: ", nrow(df_selected),
         " | Columns: ", ncol(df_selected))
 
-# ------------------------------------------------------------------------------
 # Save selected dataset
-# ------------------------------------------------------------------------------
-
 out_path <- "data/processed/fontana_et_al_selected.rds"
 saveRDS(df_selected, out_path)
 
