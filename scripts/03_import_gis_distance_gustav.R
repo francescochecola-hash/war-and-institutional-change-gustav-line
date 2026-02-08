@@ -51,14 +51,9 @@ df <- df |>
     dist_gustav_km = dist_gustav_m / 1000
   )
 
-# Basic sanity checks: dataset size and presence of key variables
-message("Rows: ", nrow(df), " | Columns: ", ncol(df))
-message("Key variables: ",
-        "nearest_gustav_municipality, dist_gustav_m, dist_gustav_km")
-
 # Save processed dataset
 out_path <- file.path("data/processed", "gustav_distance.rds")
 saveRDS(df, out_path)
 message("Saved to:  ", out_path)
 
-message("gustav_distance.rds dataset imported successfully.")
+message("gustav_distance.rds imported successfully.")
