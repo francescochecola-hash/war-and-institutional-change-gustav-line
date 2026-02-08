@@ -50,4 +50,4 @@ out_path <- file.path("data/processed", "referendum_1946.rds")
 saveRDS(df, out_path)
 message("Saved to:  ", out_path)
 
-message("referendum_1946.rds imported successfully.")
+message("referendum-19460602.txt imported successfully.")
