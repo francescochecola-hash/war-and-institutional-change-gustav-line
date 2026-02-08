@@ -45,12 +45,9 @@ names(df) <- names(df) |>
   str_replace_all("[^a-z0-9]+", "_") |>
   str_replace_all("^_|_$", "")
 
-# Optional: basic sanity check
-message("Rows: ", nrow(df), " | Columns: ", ncol(df))
-
 # Save dataset in .rds format and confirm successful save
 out_path <- file.path("data/processed", "referendum_1946.rds")
 saveRDS(df, out_path)
 message("Saved to:  ", out_path)
 
-message("Referendum (1946) dataset imported successfully.")
+message("referendum_1946.rds imported successfully.")
