@@ -55,3 +55,4 @@ data/raw/gis/
 
 # Processed data (not tracked)
 data/processed/*.rds
+data/processed/import/*.rds
