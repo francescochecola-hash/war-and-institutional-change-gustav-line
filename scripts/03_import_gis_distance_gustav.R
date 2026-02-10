@@ -4,8 +4,9 @@
 #
 # Script: 03_import_gis_distance_gustav.R
 # Purpose: Import GIS output (QGIS) with municipality-level distance to the
-#          Gustav Line and save an R version (.rds) in the folder "data/processed/"
-# Output:  data/processed/gustav_distance.rds
+#          Gustav Line and save an R version (.rds) in the folder
+#          "data/processed/import/"
+# Output:  data/processed/import/gustav_distance.rds
 # Notes:   Raw data are intentionally excluded from the repository (see .gitignore)
 # ==============================================================================
 
@@ -16,8 +17,9 @@ suppressPackageStartupMessages({
   library(stringr)  # string processing and variable name standardization
 })
 
-# Create output directory if it does not already exist
+# Create output directories if they do not already exist
 dir_create("data/processed")
+dir_create("data/processed/import")
 
 # Raw input file (QGIS output)
 raw_file <- "data/raw/gis/comuni_2001_dist_gustav.gpkg"
@@ -52,7 +54,7 @@ df <- df |>
   )
 
 # Save processed dataset
-out_path <- file.path("data/processed", "gustav_distance.rds")
+out_path <- file.path("data/processed/import", "gustav_distance.rds")
 saveRDS(df, out_path)
 message("Saved to:  ", out_path)
 
