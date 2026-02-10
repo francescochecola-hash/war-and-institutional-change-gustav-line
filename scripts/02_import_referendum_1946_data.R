@@ -4,8 +4,8 @@
 #
 # Script: 02_import_referendum_1946_data.R
 # Purpose: Import raw Italian institutional referendum data (.txt) and save them
-#          as R versions (.rds) in the folder "data/processed/"
-# Output:  data/processed/referendum_1946.rds
+#          as R versions (.rds) in the folder "data/processed/import/"
+# Output:  data/processed/import/referendum_1946.rds
 # Notes:   Raw data are intentionally excluded from the repository (see .gitignore)
 # ==============================================================================
 
@@ -16,8 +16,9 @@ suppressPackageStartupMessages({
   library(stringr)  # string handling and variable name cleaning
 })
 
-# Create output directory if it does not already exist
+# Create output directories if they do not already exist
 dir_create("data/processed")
+dir_create("data/processed/import")
 
 # Raw input file
 raw_file <- "data/raw/referendum-19460602.txt"
@@ -46,7 +47,7 @@ names(df) <- names(df) |>
   str_replace_all("^_|_$", "")
 
 # Save dataset in .rds format and confirm successful save
-out_path <- file.path("data/processed", "referendum_1946.rds")
+out_path <- file.path("data/processed/import", "referendum_1946.rds")
 saveRDS(df, out_path)
 message("Saved to:  ", out_path)
 
