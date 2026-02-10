@@ -4,8 +4,8 @@
 #
 # Script: 01_import_replication_data.R
 # Purpose: Import raw Stata datasets (.dta) and save them as R versions (.rds)
-#          in the folder "data/processed/"
-# Output:  data/processed/*.rds
+#          in the folder "data/processed/import/"
+# Output:  data/processed/import/*.rds
 # Notes:   Raw data are intentionally excluded from the repository (see .gitignore)
 # ==============================================================================
 
@@ -15,8 +15,9 @@ suppressPackageStartupMessages({
   library(tools)   # utilities for handling file paths and extensions
 })
 
-# Create output directory if it does not already exist
+# Create output directories if they do not already exist
 dir_create("data/processed")
+dir_create("data/processed/import")
 
 # Raw input datasets (stored locally; excluded from version control)
 raw_files <- c(
@@ -26,22 +27,22 @@ raw_files <- c(
 )
 
 import_and_save <- function(path) {
-
+  
   # Check that the input file exists before proceeding
   if (!file_exists(path)) {
     stop(paste("Missing input file:", path))
   }
-
+  
   # Read raw Stata dataset
   message("Importing: ", path)
   df <- read_dta(path)
-
+  
   # Construct output filename by replacing .dta with .rds
   out_name <- paste0(file_path_sans_ext(basename(path)), ".rds")
-
-  # Define output path in the processed data directory
-  out_path <- file.path("data/processed", out_name)
-
+  
+  # Define output path in the processed/import directory
+  out_path <- file.path("data/processed/import", out_name)
+  
   # Save dataset in .rds format and confirm successful save
   saveRDS(df, out_path)
   message("Saved to:  ", out_path)
