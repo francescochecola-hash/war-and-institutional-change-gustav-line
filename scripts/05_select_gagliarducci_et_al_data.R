@@ -7,7 +7,16 @@
 #          replication datasets for subsequent analysis
 # Input: data/processed/data_final_wow.rds
 # Output: data/processed/gagliarducci_et_al_selected.rds
-# Notes: Variable selection reflects empirical specifications used in the thesis 
+# Notes: Variable s# ==============================================================================
+# Francesco Checola
+# War and Institutional Change: The Case of Gustav Line
+#
+# Script: 05_select_gagliarducci_et_al_data.R
+# Purpose: Select relevant variables from Gagliarducci et al. dataset (WoW)
+#          for subsequent analysis
+# Input:  data/processed/import/data_final_wow.rds
+# Output: data/processed/select/gagliarducci_et_al_selected.rds
+# Notes:  Variable selection reflects empirical specifications used in the thesis
 # ==============================================================================
 
 suppressPackageStartupMessages({
@@ -15,8 +24,12 @@ suppressPackageStartupMessages({
   library(dplyr)  # data manipulation and variable construction
 })
 
-# Load replication dataset from "data/processed/"
-file_wow <- "data/processed/data_final_wow.rds"
+# Create output directories if they do not already exist
+dir_create("data/processed")
+dir_create("data/processed/select")
+
+# Load replication dataset from "data/processed/import/"
+file_wow <- "data/processed/import/data_final_wow.rds"
 
 # Check that the input file exists before proceeding
 if (!file_exists(file_wow)) {
@@ -32,8 +45,10 @@ df_wow <- readRDS(file_wow)
 df_one_row <- df_wow |>
   distinct(cod_istat103, .keep_all = TRUE)
 
-message("Collapsed to one row per cod_istat103 — Rows: ", nrow(df_one_row),
-        " | Columns: ", ncol(df_one_row))
+message(
+  "Collapsed to one row per cod_istat103 — Rows: ", nrow(df_one_row),
+  " | Columns: ", ncol(df_one_row)
+)
 
 # Select variables needed for the analysis
 df_selected <- df_one_row |>
@@ -42,18 +57,20 @@ df_selected <- df_one_row |>
     gustav, occupation_NAZI, occupation, tot_bande,
     longitude, latitude, mun_elev,
     analfshare_1951_tot, female_share_1951, popres_1951_tot,
-    p_voti2_liberali1919, p_voti2_cattolici1919, p_voti2_socialisti1919, 
-    p_voti2_fascisti1919, p_voti2_liberali1921, p_voti2_cattolici1921, 
-    p_voti2_socialisti1921, p_voti2_fascisti1921, 
-    p_voti2_comunisti1921, p_voti2_liberali1924, p_voti2_cattolici1924, 
+    p_voti2_liberali1919, p_voti2_cattolici1919, p_voti2_socialisti1919,
+    p_voti2_fascisti1919, p_voti2_liberali1921, p_voti2_cattolici1921,
+    p_voti2_socialisti1921, p_voti2_fascisti1921,
+    p_voti2_comunisti1921, p_voti2_liberali1924, p_voti2_cattolici1924,
     p_voti2_socialisti1924, p_voti2_fascisti1924, p_voti2_comunisti1924
   )
 
-message("Selected variables — Rows: ", nrow(df_selected),
-        " | Columns: ", ncol(df_selected))
+message(
+  "Selected variables — Rows: ", nrow(df_selected),
+  " | Columns: ", ncol(df_selected)
+)
 
 # Save the selected dataset
-out_path <- "data/processed/gagliarducci_et_al_selected.rds"
+out_path <- "data/processed/select/gagliarducci_et_al_selected.rds"
 saveRDS(df_selected, out_path)
 message("Saved to:  ", out_path)
 
