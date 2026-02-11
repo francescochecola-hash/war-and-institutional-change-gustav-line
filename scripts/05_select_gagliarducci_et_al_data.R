@@ -3,16 +3,7 @@
 # War and Institutional Change: The Case of Gustav Line
 #
 # Script: 05_select_gagliarducci_et_al_data.R
-# Purpose: Select relevant variables from Gagliarducci et al. (2020)
-#          replication datasets for subsequent analysis
-# Input: data/processed/data_final_wow.rds
-# Output: data/processed/gagliarducci_et_al_selected.rds
-# Notes: Variable s# ==============================================================================
-# Francesco Checola
-# War and Institutional Change: The Case of Gustav Line
-#
-# Script: 05_select_gagliarducci_et_al_data.R
-# Purpose: Select relevant variables from Gagliarducci et al. dataset (WoW)
+# Purpose: Select relevant variables from Gagliarducci et al. dataset
 #          for subsequent analysis
 # Input:  data/processed/import/data_final_wow.rds
 # Output: data/processed/select/gagliarducci_et_al_selected.rds
