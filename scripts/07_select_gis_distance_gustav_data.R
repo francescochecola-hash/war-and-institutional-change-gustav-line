@@ -4,11 +4,10 @@
 #
 # Script: 07_select_gis_distance_gustav_data.R
 # Purpose: Select relevant variables from dataset with municipality-level
-#          observations distance from Gustav Line replication datasets
-#          for subsequent analysis 
-# Input: data/processed/gustav_distance.rds
-# Output: data/processed/gis_gustav_distance_selected.rds
-# Notes: Variable selection reflects empirical specifications used in the thesis
+#          observations on distance from the Gustav Line for subsequent analysis
+# Input:  data/processed/import/gustav_distance.rds
+# Output: data/processed/select/gis_gustav_distance_selected.rds
+# Notes:  Variable selection reflects empirical specifications used in the thesis
 # ==============================================================================
 
 suppressPackageStartupMessages({
@@ -16,8 +15,12 @@ suppressPackageStartupMessages({
   library(dplyr)  # data manipulation and variable construction
 })
 
-# Load dataset from "data/processed/"
-file_gustav_dist <- "data/processed/gustav_distance.rds"
+# Create output directories if they do not already exist
+dir_create("data/processed")
+dir_create("data/processed/select")
+
+# Load dataset from "data/processed/import/"
+file_gustav_dist <- "data/processed/import/gustav_distance.rds"
 
 # Check that the input file exists before proceeding
 if (!file_exists(file_gustav_dist)) {
@@ -36,11 +39,13 @@ df_selected <- df_gustav_dist |>
     cc_p
   )
 
-message("Selected variables — Rows: ", nrow(df_selected),
-        " | Columns: ", ncol(df_selected))
+message(
+  "Selected variables — Rows: ", nrow(df_selected),
+  " | Columns: ", ncol(df_selected)
+)
 
 # Save selected dataset
-out_path <- "data/processed/gis_gustav_distance_selected.rds"
+out_path <- "data/processed/select/gis_gustav_distance_selected.rds"
 saveRDS(df_selected, out_path)
 
 message("Saved to:  ", out_path)
