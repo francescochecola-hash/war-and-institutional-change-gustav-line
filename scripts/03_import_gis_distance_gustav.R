@@ -3,7 +3,7 @@
 # War and Institutional Change: The Case of Gustav Line
 #
 # Script: 03_import_gis_distance_gustav.R
-# Purpose: Import GIS output (QGIS) with municipality-level distance to the
+# Purpose: Import GIS output (QGIS) with municipality-level distance to
 #          Gustav Line and save an R version (.rds) in the folder
 #          "data/processed/import/"
 # Output:  data/processed/import/gustav_distance.rds
