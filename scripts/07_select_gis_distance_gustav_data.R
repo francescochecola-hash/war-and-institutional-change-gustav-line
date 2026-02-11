@@ -33,10 +33,17 @@ df_gustav_dist <- readRDS(file_gustav_dist)
 # Select relevant variables (municipality-level)
 df_selected <- df_gustav_dist |>
   select(
-    pro_com_t,
-    comune_a,
-    pop_2001,
-    cc_p
+    cod_rip,
+    cod_reg,
+    cod_prov,
+    pro_com,
+    comune,
+    shape_leng,
+    shape_area,
+    area_new,
+    nearest_gustav_municipality,
+    dist_gustav_m,
+    dist_gustav_km
   )
 
 message(
