@@ -17,9 +17,9 @@ the thesis **"War and Institutional Change: The Case of Gustav Line"**.
 ├── scripts/                  # R scripts for data preparation and analysis
 │
 ├── results/                  
-│   ├── tables/               #
+│   ├── tables/               # GeoRDD tables
 │   │
-│   └── figures/              #
+│   └── figures/              # Figures
 │
 ├── README.md                 # Project overview and replication instructions
 └── LICENSE                   # License information
