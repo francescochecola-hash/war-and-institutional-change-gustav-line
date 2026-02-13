@@ -23,3 +23,33 @@ To replicate the analysis, users must download the following dataset from the IS
 - **Year: 2001 (Census reference)**
 
 Specifically, download the compressed folder:
+
+```
+Limiti2001.zip
+```
+
+After extracting the zip folder, navigate to:
+
+```
+Limiti2001/Com2001/
+```
+
+
+This folder contains the municipality boundary shapefile, consisting of the following required components:
+
+- `.shp` — geometry file  
+- `.shx` — shape index file  
+- `.dbf` — attribute table containing municipality identifiers (including ISTAT municipality codes)  
+- `.prj` — projection information  
+
+These files together define the complete municipality boundary shapefile and must be kept in the same folder.
+
+---
+
+## Loading data in QGIS
+
+To load municipality boundaries into QGIS:
+
+1. Open QGIS
+2. Go to **Layer → Add Layer → Add Vector Layer**
+3. 
