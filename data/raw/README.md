@@ -73,8 +73,7 @@ This project also relies on geographic data processed in QGIS, including:
 - Italian National Institute of Statistics (ISTAT)  
   https://www.istat.it/notizia/confini-delle-unita-amministrative-a-fini-statistici-al-1-gennaio-2018-2/
 
-All geographic files are stored locally in the `data/raw/gis/` directory and are
-not included in this repository.
+All geographic files are stored locally in the `data/raw/gis/` directory and are not included in this repository.
 
-Users interested in replication should reproduce the GIS preprocessing steps
-described in the documentation.
+Users interested in replication should reproduce the GIS preprocessing steps described in the documentation.  
+Detailed information on the GIS data sources and preprocessing procedures is provided in `data/raw/gis/README.md`.
