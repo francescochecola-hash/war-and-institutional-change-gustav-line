@@ -71,10 +71,9 @@ Before computing centroids and distances, it is essential to ensure that the lay
 ### Step 1 — Check the current CRS
 
 In QGIS:
-
-1. Right-click on the municipality layer  
-2. Click **Properties → Source**  
-3. Check the CRS
+ 
+1. Click **Properties → Source** on the municipality layer   
+2. Check the CRS
 
 If the CRS is:
 
@@ -83,7 +82,6 @@ EPSG:4326 — WGS84
 ```
 
 this CRS uses geographic coordinates (degrees) and is **not suitable for distance calculations**.
-
 Distance calculations must be performed using a projected CRS in **meters**.
 
 ---
