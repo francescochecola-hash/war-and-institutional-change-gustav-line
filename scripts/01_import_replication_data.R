@@ -13,17 +13,18 @@ suppressPackageStartupMessages({
   library(haven)   # import Stata datasets (.dta)
   library(fs)      # filesystem utilities: directory creation and file existence checks
   library(tools)   # utilities for handling file paths and extensions
+  library(here)    # construct project-root-relative paths (reproducibility)
 })
 
 # Create output directories if they do not already exist
-dir_create("data/processed")
-dir_create("data/processed/import")
+dir_create(here("data", "processed"))
+dir_create(here("data", "processed", "import"))
 
 # Raw input datasets (stored locally; excluded from version control)
 raw_files <- c(
-  "data/raw/replication_data_additional_data.dta",
-  "data/raw/replication_data_sample_analysis.dta",
-  "data/raw/data_final_wow.dta"
+  here("data", "raw", "replication_data_additional_data.dta"),
+  here("data", "raw", "replication_data_sample_analysis.dta"),
+  here("data", "raw", "data_final_wow.dta")
 )
 
 import_and_save <- function(path) {
@@ -41,7 +42,7 @@ import_and_save <- function(path) {
   out_name <- paste0(file_path_sans_ext(basename(path)), ".rds")
   
   # Define output path in the processed/import directory
-  out_path <- file.path("data/processed/import", out_name)
+  out_path <- here("data", "processed", "import", out_name)
   
   # Save dataset in .rds format and confirm successful save
   saveRDS(df, out_path)
