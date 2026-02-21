@@ -1,163 +1,53 @@
-row,value
-TABLE 3. DEMAND FOR INSTITUTIONAL CHANGE,
-TABLE 3. DEMAND FOR INSTITUTIONAL CHANGE,
-TABLE 3. DEMAND FOR INSTITUTIONAL CHANGE,
-TABLE 3. DEMAND FOR INSTITUTIONAL CHANGE,
-TABLE 3. DEMAND FOR INSTITUTIONAL CHANGE,
-TABLE 3. DEMAND FOR INSTITUTIONAL CHANGE,
-Dependent variable: Republic vote share in 1946,
-Dependent variable: Republic vote share in 1946,
-Dependent variable: Republic vote share in 1946,
-Dependent variable: Republic vote share in 1946,
-Dependent variable: Republic vote share in 1946,
-Dependent variable: Republic vote share in 1946,
-,
-,
-,
-,
-,
-,
-PANEL A. Polynomial in Longitude and Latitude,
-PANEL A. Polynomial in Longitude and Latitude,
-PANEL A. Polynomial in Longitude and Latitude,
-PANEL A. Polynomial in Longitude and Latitude,
-PANEL A. Polynomial in Longitude and Latitude,
-PANEL A. Polynomial in Longitude and Latitude,
+row,(1) < 100 km,(2) < 75 km,(3) < 50 km,(4) < 100 km,(5) < 75 km,(6) < 50 km
+TABLE 3. DEMAND FOR INSTITUTIONAL CHANGE,,,,,,
+Dependent variable: Republic vote share in 1946,,,,,,
+,,,,,,
+PANEL A. Polynomial in Longitude and Latitude,,,,,,
 Linear  — Gustav Line,"-7.028***
-(1.929)"
-Linear  — Gustav Line,"-8.709***
-(2.224)"
-Linear  — Gustav Line,"-2.091
-(7.705)"
-Linear  — Gustav Line,"-2.343
-(2.393)"
-Linear  — Gustav Line,"-3.651
-(2.707)"
-Linear  — Gustav Line,"3.426
+(1.929)","-8.709***
+(2.224)","-2.091
+(7.705)","-2.343
+(2.393)","-3.651
+(2.707)","3.426
 (8.392)"
-          Adj. R2,0.212
-          Adj. R2,0.225
-          Adj. R2,0.193
-          Adj. R2,0.265
-          Adj. R2,0.246
-          Adj. R2,0.232
+          Adj. R2,0.212,0.225,0.193,0.265,0.246,0.232
 Quadratic — Gustav Line,"-8.289***
-(2.662)"
-Quadratic — Gustav Line,"-2.720
-(2.933)"
-Quadratic — Gustav Line,"11.638
-(8.210)"
-Quadratic — Gustav Line,"-4.129
-(2.777)"
-Quadratic — Gustav Line,"0.178
-(3.087)"
-Quadratic — Gustav Line,"15.551*
+(2.662)","-2.720
+(2.933)","11.638
+(8.210)","-4.129
+(2.777)","0.178
+(3.087)","15.551*
 (8.393)"
-            Adj. R2,0.253
-            Adj. R2,0.263
-            Adj. R2,0.246
-            Adj. R2,0.310
-            Adj. R2,0.294
-            Adj. R2,0.293
-,
-,
-,
-,
-,
-,
-PANEL B. Polynomial in Euclidean Distance to Gustav Line,
-PANEL B. Polynomial in Euclidean Distance to Gustav Line,
-PANEL B. Polynomial in Euclidean Distance to Gustav Line,
-PANEL B. Polynomial in Euclidean Distance to Gustav Line,
-PANEL B. Polynomial in Euclidean Distance to Gustav Line,
-PANEL B. Polynomial in Euclidean Distance to Gustav Line,
+            Adj. R2,0.253,0.263,0.246,0.310,0.294,0.293
+,,,,,,
+PANEL B. Polynomial in Euclidean Distance to Gustav Line,,,,,,
 Linear  — Gustav Line,"-6.899**
-(3.414)"
-Linear  — Gustav Line,"-10.045**
-(4.927)"
-Linear  — Gustav Line,"-4.155
-(9.238)"
-Linear  — Gustav Line,"4.383
-(4.309)"
-Linear  — Gustav Line,"-5.318
-(6.253)"
-Linear  — Gustav Line,"-9.240
+(3.414)","-10.045**
+(4.927)","-4.155
+(9.238)","4.383
+(4.309)","-5.318
+(6.253)","-9.240
 (10.843)"
-          Adj. R2,0.099
-          Adj. R2,0.054
-          Adj. R2,0.012
-          Adj. R2,0.228
-          Adj. R2,0.208
-          Adj. R2,0.203
+          Adj. R2,0.099,0.054,0.012,0.228,0.208,0.203
 Quadratic — Gustav Line,"-4.872
-(4.859)"
-Quadratic — Gustav Line,"14.196
-(10.821)"
-Quadratic — Gustav Line,"-20.315
-(34.240)"
-Quadratic — Gustav Line,"-3.294
-(5.597)"
-Quadratic — Gustav Line,"4.206
-(11.317)"
-Quadratic — Gustav Line,"-19.992
+(4.859)","14.196
+(10.821)","-20.315
+(34.240)","-3.294
+(5.597)","4.206
+(11.317)","-19.992
 (33.459)"
-            Adj. R2,0.098
-            Adj. R2,0.060
-            Adj. R2,0.010
-            Adj. R2,0.231
-            Adj. R2,0.208
-            Adj. R2,0.201
-,
-,
-,
-,
-,
-,
-Ordinary Least Squares,
-Ordinary Least Squares,
-Ordinary Least Squares,
-Ordinary Least Squares,
-Ordinary Least Squares,
-Ordinary Least Squares,
+            Adj. R2,0.098,0.060,0.010,0.231,0.208,0.201
+,,,,,,
+Ordinary Least Squares,,,,,,
 Gustav Line,"12.082***
-(1.293)"
-Gustav Line,"9.790***
-(1.788)"
-Gustav Line,"9.860
-(7.302)"
-Gustav Line,"8.827***
-(1.573)"
-Gustav Line,"3.766
-(2.451)"
-Gustav Line,"6.791
+(1.293)","9.790***
+(1.788)","9.860
+(7.302)","8.827***
+(1.573)","3.766
+(2.451)","6.791
 (8.128)"
-Adj. R2,0.067
-Adj. R2,0.030
-Adj. R2,0.000
-Adj. R2,0.228
-Adj. R2,0.206
-Adj. R2,0.195
-,
-,
-,
-,
-,
-,
-Geo-demographic Controls,No
-Geo-demographic Controls,No
-Geo-demographic Controls,No
-Geo-demographic Controls,Yes
-Geo-demographic Controls,Yes
-Geo-demographic Controls,Yes
-1919–24 Elections Controls,No
-1919–24 Elections Controls,No
-1919–24 Elections Controls,No
-1919–24 Elections Controls,Yes
-1919–24 Elections Controls,Yes
-1919–24 Elections Controls,Yes
-Observations,1002
-Observations,701
-Observations,457
-Observations,952
-Observations,651
-Observations,407
+Adj. R2,0.067,0.030,0.000,0.228,0.206,0.195
+,,,,,,
+Geo-demographic Controls,No,No,No,Yes,Yes,Yes
+1919–24 Elections Controls,No,No,No,Yes,Yes,Yes
+Observations,1002,701,457,952,651,407
