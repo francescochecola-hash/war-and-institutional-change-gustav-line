@@ -3,7 +3,7 @@
 # War and Institutional Change: The Case of Gustav Line
 #
 # Script: 08_merge_dataset.R
-# Purpose:
+# Purpose: Merge municipality-level datasets using the ISTAT municipality identifier.
 # Inputs: data/processed/select/gis_gustav_distance_selected.rds
 #         data/processed/select/fontana_et_al_selected.rds
 #         data/processed/select/gagliarducci_et_al_selected.rds
