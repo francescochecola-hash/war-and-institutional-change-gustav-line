@@ -278,7 +278,6 @@ obs_vals    <- extract_field(OLS_b, "n")
 # Assemble final wide table (exact layout)
 # ------------------------------------------------------------------------------
 table_out <- dplyr::bind_rows(
-  make_row("TABLE 3. DEMAND FOR INSTITUTIONAL CHANGE", empty_cols),
   make_row("Dependent variable: Republic vote share in 1946", empty_cols),
   make_row("", empty_cols),
   
