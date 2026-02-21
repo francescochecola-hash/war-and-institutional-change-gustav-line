@@ -5,29 +5,21 @@
 # Script: 11_main_results.R
 # Purpose:
 #   Replicate Table 3 (Main Results) in the same layout as in the slide:
-#   six columns (<100/<75/<50 km) without controls (1)-(3) and with controls (4)-(6),
-#   for Panel A (poly in longitude/latitude), Panel B (poly in signed distance),
-#   and an OLS block. Export as a wide CSV table.
+#   columns (1)-(6) for <100/<75/<50 km (no controls) and <100/<75/<50 km (with controls),
+#   for Panel A (poly in longitude/latitude), Panel B (poly in signed distance), and OLS.
+#   Export a wide CSV table for replication.
 #
 # Inputs:  data/processed/merge/gustav_line_dataset.rds
 # Output:  results/tables/table3_main_results.csv
 # Notes:
-#   - Treatment: gagliarducci_gustav (1 = North of Gustav Line)
-#   - Coordinates: gagliarducci_longitude, gagliarducci_latitude
-#   - Distance: dist_gustav_km (unsigned). Signed distance is constructed using gagliarducci_gustav.
 #   - SEs in table: Robust (HC1), as in the screenshot.
-#   - Controls INCLUDED when controls_on==TRUE:
-#       (i) Elevation of the City Hall
-#       (ii) Log Population (1951)
-#       (iii) % Female Population (1951)
-#       (iv) % Illiterates (1951)
-#       (v) ALL Prewar Electoral Outcomes variables (1919/1921/1924)
+#   - Controls (when ON): Elevation City Hall + log(pop 1951) + %female1951 + %illiterates1951
+#     + ALL prewar electoral outcomes (1919/1921/1924).
 # ==============================================================================
 
 suppressPackageStartupMessages({
   library(dplyr)
   library(readr)
-  library(tidyr)
   library(sandwich)
   library(lmtest)
 })
@@ -49,51 +41,37 @@ if (!dir.exists(tables_dir)) dir.create(tables_dir, recursive = TRUE)
 # ------------------------------------------------------------------------------
 df <- readRDS(in_file)
 
-req_vars <- c(
-  "dist_gustav_km",
-  "gagliarducci_gustav",
-  "gagliarducci_longitude",
-  "gagliarducci_latitude"
-)
+req_vars <- c("dist_gustav_km", "gagliarducci_gustav", "gagliarducci_longitude", "gagliarducci_latitude")
 missing_req <- setdiff(req_vars, names(df))
 if (length(missing_req) > 0) {
   stop("Missing required variables:\n- ", paste(missing_req, collapse = "\n- "))
 }
 
 # ------------------------------------------------------------------------------
-# Outcome: Republic vote share in 1946 (auto-detect; edit if you want)
+# Outcome: Republic vote share in 1946 (AUTO-detect; set manually if needed)
 # ------------------------------------------------------------------------------
 nm <- names(df)
-candidates <- nm[grepl("ref", nm, ignore.case = TRUE) & grepl("46|1946", nm, ignore.case = TRUE)]
-candidates <- unique(c(
-  candidates[grepl("repub", candidates, ignore.case = TRUE) & grepl("share|sh|perc|pct|p_", candidates, ignore.case = TRUE)],
-  candidates[grepl("share|sh|perc|pct|p_", candidates, ignore.case = TRUE)],
-  candidates
+cands <- nm[grepl("ref", nm, ignore.case = TRUE) & grepl("46|1946", nm, ignore.case = TRUE)]
+cands <- unique(c(
+  cands[grepl("repub", cands, ignore.case = TRUE) & grepl("share|sh|perc|pct|p_", cands, ignore.case = TRUE)],
+  cands[grepl("share|sh|perc|pct|p_", cands, ignore.case = TRUE)],
+  cands
 ))
-
-if (length(candidates) == 0) {
-  stop(
-    "Could not auto-detect the 1946 Republic vote share variable.\n",
-    "Please set outcome_var manually in Script 11."
-  )
+if (length(cands) == 0) {
+  stop("Could not auto-detect the 1946 Republic vote share variable. Set outcome_var manually.")
 }
-outcome_var <- candidates[1]
+outcome_var <- cands[1]
 message("Using outcome variable: ", outcome_var)
 
 # ------------------------------------------------------------------------------
-# Sample restrictions: exclude dist==0; keep dist>0
+# Sample restrictions
 # ------------------------------------------------------------------------------
 df <- df %>%
   filter(!is.na(dist_gustav_km)) %>%
-  filter(dist_gustav_km > 0)
-
-# Signed distance (north positive, south negative)
-df <- df %>%
+  filter(dist_gustav_km > 0) %>%                      # exclude dist==0
   mutate(signed_dist_km = ifelse(gagliarducci_gustav == 1, dist_gustav_km, -dist_gustav_km))
 
-# ------------------------------------------------------------------------------
-# Scale outcome to percentage points if it looks like a share in [0,1]
-# ------------------------------------------------------------------------------
+# Scale outcome to percentage points if in [0,1]
 if (is.numeric(df[[outcome_var]])) {
   mx <- suppressWarnings(max(df[[outcome_var]], na.rm = TRUE))
   if (is.finite(mx) && mx <= 1.5) {
@@ -103,14 +81,8 @@ if (is.numeric(df[[outcome_var]])) {
 }
 
 # ------------------------------------------------------------------------------
-# Controls (as requested)
+# Controls (ONLY the ones you requested)
 # ------------------------------------------------------------------------------
-# (i) Elevation City Hall
-# (ii) Log Population (1951)
-# (iii) % Female Population (1951)
-# (iv) % Illiterates (1951)
-# (v) ALL Prewar Electoral Outcomes
-
 base_controls <- c(
   "gagliarducci_mun_elev",
   "gagliarducci_popres_1951_tot",
@@ -135,18 +107,12 @@ prewar_controls <- c(
   "gagliarducci_p_voti2_fascisti1924"
 )
 
-# Keep only controls that exist
 base_controls   <- intersect(base_controls, names(df))
 prewar_controls <- intersect(prewar_controls, names(df))
 
-# Convert share-like controls to percentage points if they are in [0,1]
-share_like <- unique(c(
-  "gagliarducci_female_share_1951",
-  "gagliarducci_analfshare_1951_tot",
-  prewar_controls
-))
+# Convert shares to percentage points if they look like shares
+share_like <- unique(c("gagliarducci_female_share_1951", "gagliarducci_analfshare_1951_tot", prewar_controls))
 share_like <- intersect(share_like, names(df))
-
 for (v in share_like) {
   if (is.numeric(df[[v]])) {
     mx <- suppressWarnings(max(df[[v]], na.rm = TRUE))
@@ -167,7 +133,7 @@ all_controls <- unique(c(base_controls, prewar_controls))
 all_controls <- intersect(all_controls, names(df))
 
 # ------------------------------------------------------------------------------
-# Helpers: robust regression + stars + formatting "coef (se)***"
+# Robust regression helpers + stars
 # ------------------------------------------------------------------------------
 star_from_p <- function(p) {
   if (is.na(p)) return("")
@@ -178,28 +144,28 @@ star_from_p <- function(p) {
 }
 
 fit_extract <- function(data, fml, coef_name = "gagliarducci_gustav") {
-  m <- lm(fml, data = data)
+  m  <- lm(fml, data = data)
   vc <- sandwich::vcovHC(m, type = "HC1")
   ct <- lmtest::coeftest(m, vcov. = vc)
   
-  beta <- as.numeric(ct[coef_name, "Estimate"])
-  se   <- as.numeric(ct[coef_name, "Std. Error"])
-  pval <- as.numeric(ct[coef_name, "Pr(>|t|)"])
-  
   list(
-    n = nobs(m),
-    beta = beta,
-    se = se,
-    p = pval,
+    n     = nobs(m),
+    beta  = as.numeric(ct[coef_name, "Estimate"]),
+    se    = as.numeric(ct[coef_name, "Std. Error"]),
+    p     = as.numeric(ct[coef_name, "Pr(>|t|)"]),
     adjr2 = summary(m)$adj.r.squared
   )
 }
 
 fmt_cell <- function(beta, se, p, digits = 3) {
   if (is.na(beta) || is.na(se)) return("")
-  st <- star_from_p(p)
-  paste0(formatC(beta, format = "f", digits = digits), st, "\n(",
-         formatC(se, format = "f", digits = digits), ")")
+  paste0(
+    formatC(beta, format = "f", digits = digits),
+    star_from_p(p),
+    "\n(",
+    formatC(se, format = "f", digits = digits),
+    ")"
+  )
 }
 
 fmt_num <- function(x, digits = 3) {
@@ -207,8 +173,8 @@ fmt_num <- function(x, digits = 3) {
   formatC(x, format = "f", digits = digits)
 }
 
-make_formula <- function(rhs_terms) {
-  as.formula(paste(outcome_var, "~", paste(rhs_terms, collapse = " + ")))
+make_formula <- function(outcome, rhs_terms) {
+  as.formula(paste(outcome, "~", paste(rhs_terms, collapse = " + ")))
 }
 
 # ------------------------------------------------------------------------------
@@ -224,11 +190,11 @@ col_defs <- tibble::tribble(
   "(6) < 50 km",    50,  TRUE
 )
 cols <- col_defs$col_id
+empty_cols <- setNames(rep("", length(cols)), cols)
 
 # ------------------------------------------------------------------------------
-# Specs (exactly like the slide)
+# Table 3 specs (like the slide)
 # ------------------------------------------------------------------------------
-# Panel A: polynomial in longitude and latitude
 A_linear_rhs <- c("gagliarducci_gustav", "gagliarducci_longitude", "gagliarducci_latitude")
 A_quad_rhs   <- c(
   "gagliarducci_gustav",
@@ -237,15 +203,13 @@ A_quad_rhs   <- c(
   "I(gagliarducci_longitude*gagliarducci_latitude)"
 )
 
-# Panel B: polynomial in (signed) distance
 B_linear_rhs <- c("gagliarducci_gustav", "signed_dist_km")
 B_quad_rhs   <- c("gagliarducci_gustav", "signed_dist_km", "I(signed_dist_km^2)")
 
-# OLS
 OLS_rhs <- c("gagliarducci_gustav")
 
 # ------------------------------------------------------------------------------
-# One cell estimator for a given rhs_base and table column
+# Estimation for one column
 # ------------------------------------------------------------------------------
 estimate_for_col <- function(rhs_base, bw, controls_on) {
   d <- df %>% filter(dist_gustav_km <= bw)
@@ -260,7 +224,7 @@ estimate_for_col <- function(rhs_base, bw, controls_on) {
     elect_flag <- "Yes"
   }
   
-  fml <- make_formula(rhs)
+  fml <- make_formula(outcome_var, rhs)
   est <- fit_extract(d, fml)
   
   list(
@@ -287,12 +251,16 @@ extract_field <- function(block, field) {
   vals
 }
 
+# CRITICAL FIX: force 6 real columns (not a single “value” column)
 make_row <- function(row_label, values_named) {
-  tibble(row = row_label) %>% bind_cols(as_tibble(values_named))
+  stopifnot(all(names(values_named) %in% cols))
+  out <- data.frame(row = row_label, stringsAsFactors = FALSE)
+  for (k in cols) out[[k]] <- values_named[[k]]
+  tibble::as_tibble(out)
 }
 
 # ------------------------------------------------------------------------------
-# Compute all blocks
+# Compute blocks
 # ------------------------------------------------------------------------------
 A_lin  <- get_block(A_linear_rhs)
 A_quad <- get_block(A_quad_rhs)
@@ -302,52 +270,51 @@ B_quad <- get_block(B_quad_rhs)
 
 OLS_b  <- get_block(OLS_rhs)
 
-# Bottom flags/obs from OLS block (same per column by construction)
 geo_flags   <- extract_field(OLS_b, "geo")
 elect_flags <- extract_field(OLS_b, "elect")
 obs_vals    <- extract_field(OLS_b, "n")
 
 # ------------------------------------------------------------------------------
-# Assemble final wide table exactly in the slide layout
+# Assemble final wide table (exact layout)
 # ------------------------------------------------------------------------------
-table_out <- bind_rows(
-  make_row("TABLE 3. DEMAND FOR INSTITUTIONAL CHANGE", setNames(rep("", length(cols)), cols)),
-  make_row("Dependent variable: Republic vote share in 1946", setNames(rep("", length(cols)), cols)),
-  make_row("", setNames(rep("", length(cols)), cols)),
+table_out <- dplyr::bind_rows(
+  make_row("TABLE 3. DEMAND FOR INSTITUTIONAL CHANGE", empty_cols),
+  make_row("Dependent variable: Republic vote share in 1946", empty_cols),
+  make_row("", empty_cols),
   
-  make_row("PANEL A. Polynomial in Longitude and Latitude", setNames(rep("", length(cols)), cols)),
+  make_row("PANEL A. Polynomial in Longitude and Latitude", empty_cols),
   
-  make_row("Linear  — Gustav Line",  extract_field(A_lin,  "cell")),
-  make_row("          Adj. R2",       extract_field(A_lin,  "adjr2")),
+  make_row("Linear — Gustav Line", extract_field(A_lin,  "cell")),
+  make_row("Adj. R2",             extract_field(A_lin,  "adjr2")),
   
   make_row("Quadratic — Gustav Line", extract_field(A_quad, "cell")),
-  make_row("            Adj. R2",     extract_field(A_quad, "adjr2")),
+  make_row("Adj. R2",                extract_field(A_quad, "adjr2")),
   
-  make_row("", setNames(rep("", length(cols)), cols)),
+  make_row("", empty_cols),
   
-  make_row("PANEL B. Polynomial in Euclidean Distance to Gustav Line", setNames(rep("", length(cols)), cols)),
+  make_row("PANEL B. Polynomial in Euclidean Distance to Gustav Line", empty_cols),
   
-  make_row("Linear  — Gustav Line",  extract_field(B_lin,  "cell")),
-  make_row("          Adj. R2",       extract_field(B_lin,  "adjr2")),
+  make_row("Linear — Gustav Line", extract_field(B_lin,  "cell")),
+  make_row("Adj. R2",             extract_field(B_lin,  "adjr2")),
   
   make_row("Quadratic — Gustav Line", extract_field(B_quad, "cell")),
-  make_row("            Adj. R2",     extract_field(B_quad, "adjr2")),
+  make_row("Adj. R2",                extract_field(B_quad, "adjr2")),
   
-  make_row("", setNames(rep("", length(cols)), cols)),
+  make_row("", empty_cols),
   
-  make_row("Ordinary Least Squares", setNames(rep("", length(cols)), cols)),
-  make_row("Gustav Line",            extract_field(OLS_b,  "cell")),
-  make_row("Adj. R2",                extract_field(OLS_b,  "adjr2")),
+  make_row("Ordinary Least Squares", empty_cols),
+  make_row("Gustav Line",            extract_field(OLS_b, "cell")),
+  make_row("Adj. R2",                extract_field(OLS_b, "adjr2")),
   
-  make_row("", setNames(rep("", length(cols)), cols)),
+  make_row("", empty_cols),
   
-  make_row("Geo-demographic Controls",      geo_flags),
-  make_row("1919–24 Elections Controls",    elect_flags),
-  make_row("Observations",                 obs_vals)
+  make_row("Geo-demographic Controls", geo_flags),
+  make_row("1919–24 Elections Controls", elect_flags),
+  make_row("Observations", obs_vals)
 )
 
 # ------------------------------------------------------------------------------
-# Export
+# Export (wide CSV)
 # ------------------------------------------------------------------------------
 readr::write_csv(table_out, out_csv, na = "", eol = "\n")
 message("Saved table to: ", out_csv)
