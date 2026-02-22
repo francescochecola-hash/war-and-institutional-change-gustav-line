@@ -67,7 +67,7 @@ The dataset contains ordered projected coordinates (X, Y) defining the geographi
 
 ---
 
-# Loading Municipality Boundaries in QGIS
+## Loading Municipality Boundaries in QGIS
 
 1. Open QGIS
 2. Go to **Layer → Add Layer → Add Vector Layer**
@@ -79,7 +79,7 @@ Limiti2001/Com2001/
 
 ---
 
-# Coordinate Reference System (CRS)
+## Coordinate Reference System (CRS)
 
 Distance calculations must be performed in a projected coordinate system.
 
@@ -98,13 +98,14 @@ EPSG:32632 — WGS 84 / UTM zone 32N
 In QGIS:
 
 **Right-click layer → Export → Save Features As…**
+
 Set CRS to EPSG:32632.
 
 All subsequent operations must use this projected CRS.
 
 ---
 
-# Fixing Invalid Geometries
+## Fixing Invalid Geometries
 
 Some municipality geometries may be invalid.
 
@@ -122,7 +123,7 @@ All following steps must use the corrected layer.
 
 ---
 
-# Constructing the Gustav Line LineString
+## Constructing the Gustav Line LineString
 
 The file `gustavcoord_december.dta` contains X and Y projected coordinates.
 
@@ -173,7 +174,7 @@ Export as:
 gustav_line_true.gpkg
 ```
 
-### Step 3 — Compute Municipality Centroids
+## Compute Municipality Centroids
 
 Distances are computed between municipality centroids and the Gustav Line.
 
@@ -193,7 +194,7 @@ comuni_2001_centroids.gpkg
 
 ---
 
-### Step 4 — Compute Distance to the Gustav Line
+## Compute Distance to the Gustav Line
 
 Distances are defined as the minimum Euclidean distance between each municipality centroid and the Gustav Line LineString.
 
@@ -227,7 +228,7 @@ The final dataset contains one observation per municipality, including:
 - Municipality identifier
 - Distance to the Gustav Line (in meters)
 
-This distance variable is imported into R using:
+This distance variable is converted in .rds file into R using:
 
 ```
 03_import_gis_distance_gustav.R
