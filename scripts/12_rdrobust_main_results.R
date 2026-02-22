@@ -2,7 +2,7 @@
 # Francesco Checola
 # War and Institutional Change: The Case of Gustav Line
 #
-# Script: 14_rdrobust_main_results.R
+# Script: 12_rdrobust_main_results.R
 # Purpose:
 #   Estimate RD treatment effects using the Cattaneo–Titiunik framework (rdrobust):
 #   local polynomial RD with robust SEs and 95% confidence intervals.
@@ -287,5 +287,3 @@ out <- bind_rows(results) %>%
 # ------------------------------------------------------------------------------
 readr::write_csv(out, out_csv, na = "", eol = "\n")
 message("Saved rdrobust results to: ", out_csv)
-
-print(out)
