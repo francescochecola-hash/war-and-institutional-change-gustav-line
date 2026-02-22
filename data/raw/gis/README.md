@@ -2,13 +2,15 @@
 
 This folder contains the geographic data used to construct municipality-level distance measures from the Gustav Line.
 
-These files are used to compute the distance between each Italian municipality and the nearest municipality located along the Gustav Line, which serves as the running variable in the empirical analysis.
+The distance to the Gustav Line serves as the running variable in the geographic regression discontinuity design (RD) implemented in the empirical analysis.
 
-Due to size and licensing restrictions, some original geographic files are **not included** in this repository. Users interested in replication should obtain the raw geographic data from the original sources listed below and reproduce the preprocessing steps described here.
+Due to licensing restrictions, original geographic boundary files are **not included** in this repository. Users interested in replication must download the raw data from the original sources listed below and reproduce the preprocessing steps described here.
 
 ---
 
 ## Data sources
+
+### 1. Municipality Boundaries
 
 The geographic source is:
 
@@ -34,7 +36,6 @@ After extracting the zip folder, navigate to:
 Limiti2001/Com2001/
 ```
 
-
 This folder contains the municipality boundary shapefile, consisting of the following required components:
 
 - `.shp` — geometry file  
@@ -46,9 +47,27 @@ These files together define the complete municipality boundary shapefile and mus
 
 ---
 
-## Loading data in QGIS
+### 2. Gustav Line Coordinates
 
-To load municipality boundaries into QGIS:
+The historical path of the Gustav Line is reconstructed using:
+
+```
+gustavcoord_december.dta
+```
+
+This file is obtained from the replication package of:
+
+Gagliarducci, Stefano, Massimiliano Gaetano Onorato, Francesco Sobbrio, and Guido Tabellini (2020),  
+“War of the Waves: Radio and Resistance during World War II,”  
+*American Economic Journal: Applied Economics*, 12(4): 1–38.
+
+The replication materials are publicly available and are referenced in the main `data/raw` README file of this repository.
+
+The dataset contains ordered projected coordinates (X, Y) defining the geographic trajectory of the Gustav defensive line as used in the original study.
+
+---
+
+# Loading Municipality Boundaries in QGIS
 
 1. Open QGIS
 2. Go to **Layer → Add Layer → Add Vector Layer**
@@ -58,266 +77,174 @@ To load municipality boundaries into QGIS:
 Limiti2001/Com2001/
 ```
 
-QGIS will load the municipality boundary layer.
-
 ---
 
-## Coordinate Reference System (CRS) check and reprojection
+# Coordinate Reference System (CRS)
 
-Before computing centroids and distances, it is essential to ensure that the layer uses a projected 
-Coordinate Reference System (CRS) suitable for distance calculations.
+Distance calculations must be performed in a projected coordinate system.
 
-### Step 1 — Check the current CRS
-
-In QGIS:
- 
-1. Click **Properties → Source** on the municipality layer   
-2. Check the CRS
-
-If the CRS is:
+If the layer CRS is:
 
 ```
 EPSG:4326 — WGS84
 ```
 
-this CRS uses geographic coordinates (degrees) and is **not suitable for distance calculations**.
-Distance calculations must be performed using a projected CRS in **meters**.
-
----
-
-### Step 2 — Reproject the layer
-
-Reproject the layer using the following CRS:
+reproject it to:
 
 ```
-EPSG:32632 – WGS 84 / UTM zone 32N
+EPSG:32632 — WGS 84 / UTM zone 32N
 ```
-
-This projected CRS is appropriate for Italy and allows accurate distance calculations.
 
 In QGIS:
 
-- Select **Export → Save Features As…** on the municipality layer
+**Right-click layer → Export → Save Features As…**
+Set CRS to EPSG:32632.
 
-Set:
-
-- Format: ESRI Shapefile  
-- CRS: EPSG:32632 — WGS 84 / UTM zone 32N+
-  
----
-
-## Identifying municipalities located along the Gustav Line
-
-This step creates a layer containing only the municipalities located along the Gustav Line. These municipalities serve as the reference units for computing distance measures.
-
-### Step 1 — Open the municipality layer
-
-Load the reprojected municipality layer in QGIS.
-
-Open the attribute table:
-
-- Click **Open Attribute Table** on the layer
+All subsequent operations must use this projected CRS.
 
 ---
 
-### Step 2 — Select municipalities along the Gustav Line
+# Fixing Invalid Geometries
 
-Use the expression-based selection tool:
+Some municipality geometries may be invalid.
 
-- Click **Select by Expression**
+Use:
 
-Enter the following expression:
+Processing → Fix geometries
 
-```
-"COMUNE" IN (
-'Gaeta',
-'Formia',
-'Minturno',
-'Santi Cosma e Damiano',
-'Castelforte',
-'Ausonia',
-'Cassino',
-'Coreno Ausonio',
-'Vallemaio',
-'Sant''Apollinare',
-'Sant''Elia Fiumerapido',
-'Vallerotonda',
-'San Biagio Saracinisco',
-'Picinisco',
-'Alfedena',
-'Scontrone',
-'Castel di Sangro',
-'Roccaraso',
-'Ateleta',
-'San Pietro Avellana',
-'Palena',
-'Taranta Peligna',
-'Lama dei Peligni',
-'Fara San Martino',
-'Pennapiedimonte',
-'Guardiagrele',
-'Orsogna',
-'Poggiofiorito',
-'Arielli',
-'Crecchio',
-'Ortona'
-)
-```
-
-This selects all municipalities located along the Gustav Line.
-
----
-
-### Step 3 — Export selected municipalities as a new layer
-
-With the municipalities selected:
-
-- Click **Export → Save Selected Features As…** on the municipality layer
-
-Set:
-
-- Format: ESRI Shapefile  
-- CRS: EPSG:32632 — WGS 84 / UTM zone 32N  
-
-This creates a new layer containing only municipalities located along the Gustav Line.
-
----
-
-## Computing municipality centroids
-
-The objective is to compute, for each Italian municipality, the minimum distance to the nearest municipality located along the Gustav Line.
-
-Formally, for each municipality *i*, the distance measure is defined as:
-
-dist_i = min d(i, g), for g ∈ Gustav
-
-where distances are computed between municipality centroids.
-
-Because distance calculations must be performed between points rather than polygons, municipality boundaries must be converted into centroids.
-
----
-
-### Step 1 — Compute centroids for all municipalities
-
-Load the reprojected municipality layer in QGIS.
-
-Open the Processing Toolbox:
-
-- Go to **Processing → Toolbox**
-- Search for: **Centroids**
-- Select: **Vector geometry → Centroids**
-
-Set:
-
-- Input layer: the reprojected municipality layer
-- CRS: EPSG:32632 — WGS 84 / UTM zone 32N
-
-This creates a point layer containing one centroid for each municipality.
-
-Distances computed using this layer will be expressed in meters because the CRS uses projected coordinates.
-
----
-
-### Step 2 — Fix invalid geometries
-
-Some municipality geometries may be invalid, which prevents centroid computation.
-
-To fix geometries:
-
-1. Open the **Processing Toolbox**
-2. Search for: **Fix geometries**
-3. Select: **Vector geometry → Fix geometries**
-4. Set:
-
-   - Input layer: `...`
-   - Output file (example):
+Output example:
 
 ```
 comuni_2001_fixed.gpkg
 ```
 
-This creates a corrected municipality layer with valid geometries.
-All subsequent operations should be performed using this corrected layer.
+All following steps must use the corrected layer.
 
 ---
 
-### Step 3 — Compute centroids for Gustav Line municipalities only
+# Constructing the Gustav Line LineString
 
-After fixing geometries and creating the corrected municipality layer (`comuni_2001_fixed.gpkg`), compute centroids only 
-for the municipalities located along the Gustav Line.
+The file `gustavcoord_december.dta` contains X and Y projected coordinates.
 
-First, select the 31 Gustav Line municipalities:
+### Step 1 — Convert .dta to CSV (in R)
 
-- Click **Select by Expression** on `comuni_2001_fixed.gpkg`
-- Use the same expression defined in `Step 2 — Select municipalities along the Gustav Line`
+```r
+library(haven)
+library(readr)
 
-With the municipalities selected:
+gustav <- read_dta("path/to/gustavcoord_december.dta")
+write_csv(gustav, "gustavcoord_december.csv")
+```
 
-- Click **Export → Save Selected Features As…** on `comuni_2001_fixed.gpkg`
+### Step 2 — Import into QGIS
 
-This creates a point layer containing centroids for all municipalities located along the Gustav Line.
+**Layer → Add Layer → Add Delimited Text Layer**
+
+Geometry definition: Coordinate X/Y
+
+- X field: `_X`
+- Y field: `_Y`
+- CRS: EPSG:32632
+
+This creates a point layer.
+
+### Step 3 — Convert Points to Line
+
+**Processing → Points to Path**
+
+- Input layer: gustavcoord_december
+- Group field: `_ID`
+
+This produces a LineString geometry representing the Gustav Line.
+
+Verify:
+
+- Geometry type: LineString
+- Number of features: 1
+
+If necessary, use:
+
+**Processing → Dissolve**
+to obtain a single continuous line.
+
+Export as:
+
+```
+gustav_line_true.gpkg
+```
+
+### Step 3 — Compute Municipality Centroids
+
+Distances are computed between municipality centroids and the Gustav Line.
+
+**Processing → Centroids**
+
+Input:
+
+```
+comuni_2001_fixed.gpkg
+```
+
+Output:
+
+```
+comuni_2001_centroids.gpkg
+```
 
 ---
 
-## Computing distance to the nearest Gustav Line municipality
+### Step 4 — Compute Distance to the Gustav Line
 
-This step computes, for each Italian municipality, the **minimum distance** to the nearest municipality located along the Gustav Line.
-
-Distances are computed between municipality centroids using a projected coordinate system (EPSG:32632 — WGS 84 / UTM zone 32N). 
-Distances are initially expressed in meters and later converted to kilometers in the empirical analysis.
-
-### Step 1 — Compute distance to nearest Gustav Line municipality
-
-Use the nearest-neighbor distance tool.
+Distances are defined as the minimum Euclidean distance between each municipality centroid and the Gustav Line LineString.
 
 In QGIS:
 
-1. Open **Processing Toolbox**
-2. Navigate to:
+**Processing → Join attributes by nearest**
+
+Input layer:
+- `comuni_2001_centroids`
+
+Input layer 2:
+- `gustav_line_true`
+
+Maximum nearest neighbors:
+- 1
+
+Export the resulting layer as:
 
 ```
-Vector analysis → Distance to nearest hub (points)
+comuni_2001_dist_gustav.gpkg
 ```
 
-3. Set:
+Distances are expressed in meters.
 
-**Input point layer:**
-
-```
-comuni_2001_centroids
-```
-
-**Hub layer:**
-
-```
-gustav_line_centroids
-```
-
-**Hub layer name attribute:**
-
-Select:
-
-- Municipality name
-
-**Distance units:**
-
-Meters (default, since CRS is projected)
-
-**Output file (example):**
-
-```
-comuni_2001_distance_gustav.gpkg
-```
 ---
 
 ## Output
 
-The resulting layer contains one observation per municipality, including:
+The final dataset contains one observation per municipality, including:
 
-- Municipality identifier  
-- Nearest Gustav Line municipality  
-- Minimum distance to the Gustav Line (in meters)
+- Municipality identifier
+- Distance to the Gustav Line (in meters)
 
-This distance variable is the key geographic measure used in the empirical analysis.
+This distance variable is imported into R using:
 
-The resulting dataset is exported and imported into R using the script `03_import_gis_distance_gustav.R`.
+```
+03_import_gis_distance_gustav.R
+```
+
+It serves as the running variable in the geographic RD design.
+
+Distances are converted to kilometers within the R scripts.
+
+---
+
+## Methodological Note
+
+The Gustav Line geometry is reconstructed directly from historical coordinate data (`gustavcoord_december.dta`) provided 
+in the replication package of Gagliarducci et al. (2020).
+
+Distances are computed between municipality centroids and the continuous LineString representing the historical front.
+
+Because the line geometry is independent of administrative municipal boundaries, the resulting running variable is **exogenous**
+to municipal administrative definitions and suitable for geographic regression discontinuity analysis.
