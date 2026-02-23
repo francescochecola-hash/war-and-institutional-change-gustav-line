@@ -88,6 +88,14 @@ merged <- gis %>%
 # Derived variables (used in empirical specifications)
 merged <- merged %>%
   mutate(
+    # % Female population in 1921
+    perc_f_popres_1921 = case_when(
+      is.na(fontana_popres_1921_f) | 
+        is.na(fontana_popres_1921_tot) |
+        fontana_popres_1921_tot == 0 ~ NA_real_,
+      TRUE ~ (fontana_popres_1921_f / fontana_popres_1921_tot) * 100
+    ),
+    
     # Squared coordinates from Gagliarducci et al.
     longitude2 = gagliarducci_longitude^2,
     latitude2  = gagliarducci_latitude^2,
