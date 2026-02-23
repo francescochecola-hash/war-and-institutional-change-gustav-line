@@ -1,26 +1,26 @@
 panel,variable,Observations,Coefficient,Robust_SE,Conley_SE,Adj_R2
-Geographic Factors,Elevation of the City Hall,1060,-0.226,0.259,1.408,0.13
-Geographic Factors,Max. elevation of the Municipality,520,-183.268,73.818,256.436,0.018
-Demo-economic variables,Log Population (1951),1060,-0.287,0.087,0.258,0.061
-Demo-economic variables,% Female Population (1951),1060,1.076,0.133,0.327,0.144
-Demo-economic variables,% Illiterates (1951),1060,1.208,0.629,2.03,0.166
-Demo-economic variables,% Agricultural workers (1929),144,2.702,4.488,3.802,0.04
-Demo-economic variables,% Farms (1929),144,2.263,1.323,1.784,0.185
-Demo-economic variables,Log Cattle per capita (1929),470,0.825,0.132,0.363,0.225
-Demo-economic variables,% Industrial workers (1927),492,-2.092,0.706,0.723,0.029
-Demo-economic variables,% Plants (1927),492,-1.001,0.25,0.354,0.067
-Prewar Electoral Outcomes,% Socialist 1919,1009,-5.032,0.996,3.401,0.191
-Prewar Electoral Outcomes,% Catholic 1919,1009,-10.115,1.378,4.334,0.089
-Prewar Electoral Outcomes,% Liberal 1919,1009,-12.981,2.561,9.464,0.225
-Prewar Electoral Outcomes,% Socialist 1921,1009,-4.483,0.922,2.58,0.146
-Prewar Electoral Outcomes,% Communist 1921,1009,-0.897,0.184,0.324,0.106
-Prewar Electoral Outcomes,% Catholic 1921,1009,-12.862,1.602,3.64,0.16
-Prewar Electoral Outcomes,% Liberal 1921,1009,45.534,2.919,11.48,0.231
-Prewar Electoral Outcomes,% Fascist 1921,1009,-0.482,0.169,0.429,0.069
-Prewar Electoral Outcomes,% Socialist 1924,1009,-1.628,0.312,1.032,0.087
-Prewar Electoral Outcomes,% Communist 1924,1009,-0.388,0.081,0.238,0.017
-Prewar Electoral Outcomes,% Catholic 1924,1009,-2.711,0.478,0.953,0.185
-Prewar Electoral Outcomes,% Liberal 1924,1009,-0.769,0.208,0.603,0.014
-Prewar Electoral Outcomes,% Fascist 1924,1009,-17.894,2.004,10.445,0.232
-Political Attitudes during Fascism,Left-wing citizens under surveillance,493,-0.302,0.162,0.343,0.114
-Political Attitudes during Fascism,Other citizens under surveillance,493,-0.056,0.023,0.044,0.053
+Geographic Factors,Elevation of the City Hall,1063,-0.381,0.258,1.391,0.151
+Geographic Factors,Max. elevation of the Municipality,506,-221.246,74.588,255.937,0.034
+Demo-economic variables,Log Population (1951),1063,-0.263,0.088,0.272,0.055
+Demo-economic variables,% Female Population (1951),1063,1.109,0.135,0.345,0.139
+Demo-economic variables,% Illiterates (1951),1063,1.104,0.631,2.109,0.152
+Demo-economic variables,% Agricultural workers (1929),127,4.16,4.475,2.119,0.078
+Demo-economic variables,% Farms (1929),127,2.726,1.357,1.904,0.126
+Demo-economic variables,Log Cattle per capita (1929),458,0.838,0.133,0.352,0.251
+Demo-economic variables,% Industrial workers (1927),481,-2.204,0.72,0.809,0.02
+Demo-economic variables,% Plants (1927),481,-1.041,0.252,0.373,0.074
+Prewar Electoral Outcomes,% Socialist 1919,1011,-6.416,1.044,4.005,0.199
+Prewar Electoral Outcomes,% Catholic 1919,1011,-10.421,1.383,5.344,0.089
+Prewar Electoral Outcomes,% Liberal 1919,1011,-14.004,2.561,10.899,0.231
+Prewar Electoral Outcomes,% Socialist 1921,1011,-5.304,0.967,2.921,0.143
+Prewar Electoral Outcomes,% Communist 1921,1011,-0.895,0.202,0.358,0.092
+Prewar Electoral Outcomes,% Catholic 1921,1011,-11.76,1.6,3.521,0.178
+Prewar Electoral Outcomes,% Liberal 1921,1011,44.528,2.913,13.604,0.204
+Prewar Electoral Outcomes,% Fascist 1921,1011,-0.457,0.166,0.364,0.069
+Prewar Electoral Outcomes,% Socialist 1924,1011,-1.1,0.225,0.753,0.032
+Prewar Electoral Outcomes,% Communist 1924,1011,-0.272,0.066,0.171,0.018
+Prewar Electoral Outcomes,% Catholic 1924,1011,-2.168,0.461,0.937,0.17
+Prewar Electoral Outcomes,% Liberal 1924,1011,-0.97,0.225,0.666,0.021
+Prewar Electoral Outcomes,% Fascist 1924,1011,-17.983,1.964,12.427,0.171
+Political Attitudes during Fascism,Left-wing citizens under surveillance,482,-0.223,0.172,0.311,0.091
+Political Attitudes during Fascism,Other citizens under surveillance,482,-0.041,0.021,0.035,0.039
