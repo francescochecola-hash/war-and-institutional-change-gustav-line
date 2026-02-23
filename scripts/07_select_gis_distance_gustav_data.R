@@ -13,14 +13,15 @@
 suppressPackageStartupMessages({
   library(fs)     # filesystem utilities: directory creation and file existence checks
   library(dplyr)  # data manipulation and variable construction
+  library(here)   # robust file paths relative to project root
 })
 
 # Create output directories if they do not already exist
-dir_create("data/processed")
-dir_create("data/processed/select")
+dir_create(here("data", "processed"))
+dir_create(here("data", "processed", "select"))
 
 # Load dataset from "data/processed/import/"
-file_gustav_dist <- "data/processed/import/gustav_distance.rds"
+file_gustav_dist <- here("data", "processed", "import", "gustav_distance.rds")
 
 # Check that the input file exists before proceeding
 if (!file_exists(file_gustav_dist)) {
@@ -38,12 +39,8 @@ df_selected <- df_gustav_dist |>
     cod_prov,
     pro_com,
     comune,
-    shape_leng,
-    shape_area,
-    area_new,
-    nearest_gustav_municipality,
-    dist_gustav_m,
-    dist_gustav_km
+    distance,
+    distance_km
   )
 
 message(
@@ -52,7 +49,7 @@ message(
 )
 
 # Save selected dataset
-out_path <- "data/processed/select/gis_gustav_distance_selected.rds"
+out_path <- here("data", "processed", "select", "gis_gustav_distance_selected.rds")
 saveRDS(df_selected, out_path)
 
 message("Saved to:  ", out_path)
