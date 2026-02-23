@@ -2,7 +2,7 @@
 # Francesco Checola
 # War and Institutional Change: The Case of Gustav Line
 #
-# Script: 07_select_gis_distance_gustav_data.R
+# Script: 09_select_gis_distance_gustav_data.R
 # Purpose: Select relevant variables from dataset with municipality-level
 #          observations on distance from the Gustav Line for subsequent analysis
 # Input:  data/processed/import/gustav_distance.rds
