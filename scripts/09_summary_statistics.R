@@ -49,7 +49,7 @@ table_spec <- tibble::tribble(
   
   # --- Demographic and Economic Factors ---
   "Demographic and Economic Factors","fontana_popres_1921_tot",              "Population (1921)",
-  "Demographic and Economic Factors","fontana_popres_1921_f",                "% Female Population (1921)",
+  "Demographic and Economic Factors","perc_f_popres_1921",                   "% Female Population (1921)",
   "Demographic and Economic Factors","fontana_analfshare_1921_tot",          "% Illiterates (1921)",
   "Demographic and Economic Factors","gagliarducci_popres_1951_tot",         "Population (1951)",
   "Demographic and Economic Factors","gagliarducci_female_share_1951",       "% Female Population (1951)",
