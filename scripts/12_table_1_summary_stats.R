@@ -2,7 +2,7 @@
 # Francesco Checola
 # War and Institutional Change: The Case of Gustav Line
 #
-# Script: 12_results_table_1_summary_statistics.R
+# Script: 12_results_table_1_summary_stats.R
 # Purpose:
 #   Compute summary statistics for Italy and for municipalities within 100 km of the Gustav Line.
 #   Export a dataset (with n. of obs., mean, sd, min, max) for replication.
