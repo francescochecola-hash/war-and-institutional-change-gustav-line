@@ -2,7 +2,7 @@
 # Francesco Checola
 # War and Institutional Change: The Case of Gustav Line
 #
-# Script: 10_balance_checks.R
+# Script: 13_table_2_balance_checks.R
 # Purpose:
 #   Run balance checks (covariate continuity) around the Gustav Line using a linear polynomial
 #   in longitude and latitude, and export Table-2 style results (coef, robust SE, Conley SE, Adj. R2).
@@ -18,32 +18,34 @@
 # ==============================================================================
 
 suppressPackageStartupMessages({
-  library(dplyr)
-  library(tidyr)
-  library(readr)
-  library(broom)
-  library(sandwich)
-  library(lmtest)
+  library(dplyr)    # data manipulation
+  library(tidyr)    # data reshaping
+  library(readr)    # csv export
+  library(broom)    # model tidying (kept for extensibility)
+  library(sandwich) # robust vcov
+  library(lmtest)   # coeftest
+  library(fs)       # filesystem utilities
+  library(here)     # robust file paths relative to project root
 })
 
 # ------------------------------------------------------------------------------
-# Paths
+# Paths (project-root relative via here())
 # ------------------------------------------------------------------------------
-in_file <- "data/processed/merge/gustav_line_dataset.rds"
+in_file <- here("data", "processed", "merge", "gustav_line_dataset.rds")
 
-results_dir <- "results"
-tables_dir  <- file.path(results_dir, "tables")
-out_csv     <- file.path(tables_dir, "table2_balance_checks.csv")
+results_dir <- here("results")
+tables_dir  <- here("results", "tables")
+out_csv     <- here("results", "tables", "table2_balance_checks.csv")
 
-if (!dir.exists(results_dir)) dir.create(results_dir)
-if (!dir.exists(tables_dir)) dir.create(tables_dir, recursive = TRUE)
+dir_create(results_dir)
+dir_create(tables_dir)
 
 # ------------------------------------------------------------------------------
 # Load data
 # ------------------------------------------------------------------------------
 df <- readRDS(in_file)
 
-req_vars <- c("dist_gustav_km", "gagliarducci_gustav", "gagliarducci_longitude", "gagliarducci_latitude")
+req_vars <- c("distance_km", "gagliarducci_gustav", "gagliarducci_longitude", "gagliarducci_latitude")
 missing_req <- setdiff(req_vars, names(df))
 if (length(missing_req) > 0) {
   stop("Missing required variables:\n- ", paste(missing_req, collapse = "\n- "))
@@ -51,8 +53,8 @@ if (length(missing_req) > 0) {
 
 # Restrict sample: within 100 km, exclude exactly-on-the-line observations
 df <- df %>%
-  filter(!is.na(dist_gustav_km)) %>%
-  filter(dist_gustav_km > 0, dist_gustav_km <= 100)
+  filter(!is.na(distance_km)) %>%
+  filter(distance_km > 0, distance_km <= 100)
 
 # ------------------------------------------------------------------------------
 # Table structure (same covariates as Table 1, organized in panels)
@@ -115,9 +117,8 @@ pct_vars <- table_spec %>%
 df <- df %>%
   mutate(across(all_of(pct_vars), ~ .x * 100))
 
-# Logs: handle safely (log(0) -> NA). Assumes variables are levels or strictly positive after filtering.
-log_pop_1951_var   <- "gagliarducci_popres_1951_tot"
-log_cattle_var     <- "fontana_bestiame_1929_shpop"
+log_pop_1951_var <- "gagliarducci_popres_1951_tot"
+log_cattle_var   <- "fontana_bestiame_1929_shpop"
 
 df <- df %>%
   mutate(
@@ -127,7 +128,6 @@ df <- df %>%
                                         log(.data[[log_cattle_var]]), NA_real_)
   )
 
-# Replace the original variables in table_spec with logged versions where appropriate
 table_spec <- table_spec %>%
   mutate(
     var = case_when(
@@ -147,8 +147,6 @@ conley_se <- function(formula, data, coef_name,
                       lon = "gagliarducci_longitude") {
   if (!have_fixest) return(NA_real_)
   
-  # fitest expects 'vcov = "conley"' with lat/lon columns provided
-  # Note: this uses fixest's built-in Conley HAC. Parameters are defaults unless specified.
   m <- fixest::feols(formula, data = data, vcov = fixest::vcov_conley(lat = lat, lon = lon))
   ct <- fixest::coeftable(m)
   
@@ -165,23 +163,18 @@ run_balance <- function(y_var, y_label, panel_name) {
     select(all_of(c(y_var, "gagliarducci_gustav", "gagliarducci_longitude", "gagliarducci_latitude"))) %>%
     filter(!is.na(.data[[y_var]]))
   
-  # OLS with linear lat/lon
   fml <- as.formula(paste0(y_var, " ~ gagliarducci_gustav + gagliarducci_longitude + gagliarducci_latitude"))
   m <- lm(fml, data = d)
   
-  # Robust SE (HC1)
   vc <- sandwich::vcovHC(m, type = "HC1")
   ct <- lmtest::coeftest(m, vcov. = vc)
   
-  # Extract treatment effect and robust SE
   coef_name <- "gagliarducci_gustav"
   beta <- as.numeric(ct[coef_name, "Estimate"])
   se_rob <- as.numeric(ct[coef_name, "Std. Error"])
   
-  # Conley SE (if available)
   se_conley <- conley_se(fml, d, coef_name = coef_name)
   
-  # Adj R2
   adj_r2 <- summary(m)$adj.r.squared
   
   tibble(
@@ -206,7 +199,6 @@ res <- bind_rows(lapply(seq_len(nrow(table_spec)), function(i) {
   )
 }))
 
-# Ordering like in the table
 panel_order <- c(
   "Geographic Factors",
   "Demo-economic variables",
