@@ -13,7 +13,7 @@ suppressPackageStartupMessages({
   library(haven)   # import Stata datasets (.dta)
   library(fs)      # filesystem utilities: directory creation and file existence checks
   library(tools)   # utilities for handling file paths and extensions
-  library(here)    # construct project-root-relative paths (reproducibility)
+  library(here)    # robust file paths relative to project root
 })
 
 # Create output directories if they do not already exist
