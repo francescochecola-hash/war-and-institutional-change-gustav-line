@@ -2,7 +2,7 @@ panel,variable,Italy_Observations,Italy_Mean,Italy_SD,Italy_Min,Italy_Max,Within
 Geographic Factors,Elevation of the City Hall,7996,3.526,2.907,0,20.35,1063,4.281,2.986,0.02,14.33
 Geographic Factors,Max. elevation of the Municipality,5698,789.374,796.054,2,4554,507,789.069,568.055,9,2912
 Demographic and Economic Factors,Population (1921),5490,4796.447,21950.713,84,775203,483,5716.308,35155.129,354,768099
-Demographic and Economic Factors,% Female Population (1921),5490,243277.322,1118902.21,4400,39993700,483,294136.853,1817104.606,18400,39725900
+Demographic and Economic Factors,% Female Population (1921),5490,5088.098,254.646,1972.477,7095.047,483,5202.305,198.938,4016.901,5992.647
 Demographic and Economic Factors,% Illiterates (1921),5698,23.603,20.085,0,85.685,507,48.072,12.187,10.982,78.58
 Demographic and Economic Factors,Population (1951),7996,6.152,31.372,0.074,1651.753,1063,6.369,31.678,0.244,1010.55
 Demographic and Economic Factors,% Female Population (1951),7996,50.422,1.837,32.54,62.952,1063,51.056,1.518,44.993,62.952
