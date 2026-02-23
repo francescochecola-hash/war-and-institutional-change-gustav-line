@@ -14,14 +14,15 @@ suppressPackageStartupMessages({
   library(readr)    # import of delimited text files
   library(dplyr)    # basic data inspection and manipulation
   library(stringr)  # string handling and variable name cleaning
+  library(here)     # robust file paths relative to project root
 })
 
 # Create output directories if they do not already exist
-dir_create("data/processed")
-dir_create("data/processed/import")
+dir_create(here("data", "processed"))
+dir_create(here("data", "processed", "import"))
 
 # Raw input file
-raw_file <- "data/raw/referendum-19460602.txt"
+raw_file <- here("data", "raw", "referendum-19460602.txt")
 
 # Check that the input file exists before proceeding
 if (!file_exists(raw_file)) {
@@ -47,8 +48,8 @@ names(df) <- names(df) |>
   str_replace_all("^_|_$", "")
 
 # Save dataset in .rds format and confirm successful save
-out_path <- file.path("data/processed/import", "referendum_1946.rds")
+out_path <- here("data", "processed", "import", "referendum_1946.rds")
 saveRDS(df, out_path)
-message("Saved to:  ", out_path)
 
+message("Saved to:  ", out_path)
 message("referendum-19460602.txt imported successfully.")
