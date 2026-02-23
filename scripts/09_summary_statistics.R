@@ -2,48 +2,44 @@
 # Francesco Checola
 # War and Institutional Change: The Case of Gustav Line
 #
-# Script: 09_summary_statistics.R
+# Script: 12_results_table_1_summary_statistics.R
 # Purpose:
 #   Compute summary statistics for Italy and for municipalities within 100 km of the Gustav Line.
-#   Export a Table-1 style dataset (N, mean, sd, min, max) for replication.
+#   Export a dataset (with n. of obs., mean, sd, min, max) for replication.
 #
-# Inputs:  data/processed/merge/gustav_line_dataset.rds
-# Output:  results/tables/table1_summary_stats.csv
+# Input:  data/processed/merge/gustav_line_dataset.rds
+# Output: results/tables/table1_summary_stats.csv
 # ==============================================================================
 
 suppressPackageStartupMessages({
-  library(dplyr)
-  library(tidyr)
-  library(readr)
+  library(dplyr)  # data manipulation and summary statistics
+  library(tidyr)  # data reshaping
+  library(readr)  # export of csv files
+  library(fs)     # filesystem utilities: directory creation
+  library(here)   # robust file paths relative to project root
 })
 
-# ------------------------------------------------------------------------------
-# Paths
-# ------------------------------------------------------------------------------
-in_file <- "data/processed/merge/gustav_line_dataset.rds"
+# Paths (project-root relative via here())
+in_file <- here("data", "processed", "merge", "gustav_line_dataset.rds")
 
-results_dir <- "results"
-tables_dir  <- file.path(results_dir, "tables")
-out_csv     <- file.path(tables_dir, "table1_summary_stats.csv")
+results_dir <- here("results")
+tables_dir  <- here("results", "tables")
+out_csv     <- here("results", "tables", "table1_summary_stats.csv")
 
-if (!dir.exists(results_dir)) dir.create(results_dir)
-if (!dir.exists(tables_dir)) dir.create(tables_dir, recursive = TRUE)
+dir_create(results_dir)
+dir_create(tables_dir)
 
-# ------------------------------------------------------------------------------
 # Load data
-# ------------------------------------------------------------------------------
 df <- readRDS(in_file)
 
-if (!("dist_gustav_km" %in% names(df))) {
-  stop("Variable 'dist_gustav_km' not found in gustav_line_dataset.rds")
+if (!("distance_km" %in% names(df))) {
+  stop("Variable 'distance_km' not found in gustav_line_dataset.rds")
 }
 
 df <- df %>%
-  mutate(within_100km = !is.na(dist_gustav_km) & dist_gustav_km <= 100)
+  mutate(within_100km = !is.na(distance_km) & distance_km <= 100)
 
-# ------------------------------------------------------------------------------
-# Table structure (panels + labels) like in the paper
-# ------------------------------------------------------------------------------
+# Table structure
 table_spec <- tibble::tribble(
   ~panel,                           ~var,                                   ~label,
   
@@ -96,11 +92,7 @@ if (length(missing_vars) > 0) {
   )
 }
 
-# ------------------------------------------------------------------------------
 # Convert shares to percentage points (x100)
-# ------------------------------------------------------------------------------
-# Heuristic: any variable whose label begins with "%" is treated as a share in [0,1].
-# This matches your dataset where many shares are stored as fractions.
 pct_vars <- table_spec %>%
   filter(grepl("^%\\s", label)) %>%
   pull(var) %>%
@@ -109,9 +101,7 @@ pct_vars <- table_spec %>%
 df <- df %>%
   mutate(across(all_of(pct_vars), ~ .x * 100))
 
-# ------------------------------------------------------------------------------
 # Summary-stat helpers
-# ------------------------------------------------------------------------------
 summ_one <- function(data, var) {
   x <- data[[var]]
   tibble(
@@ -135,17 +125,13 @@ make_panel <- function(data, group_name) {
   }))
 }
 
-# ------------------------------------------------------------------------------
 # Compute panels
-# ------------------------------------------------------------------------------
 tab_italy <- make_panel(df, "Italy")
 tab_100km <- make_panel(df %>% filter(within_100km), "Within 100 km from Gustav Line")
 
 tab_long <- bind_rows(tab_italy, tab_100km)
 
-# ------------------------------------------------------------------------------
 # Wide layout + ordering + formatting
-# ------------------------------------------------------------------------------
 panel_order <- c(
   "Geographic Factors",
   "Demographic and Economic Factors",
@@ -166,7 +152,6 @@ tab_wide <- tab_long %>%
   ) %>%
   arrange(panel, variable_raw) %>%
   select(panel, variable, starts_with("Italy_"), starts_with("Within 100 km from Gustav Line_")) %>%
-  # Formatting: observations as integer, others rounded
   mutate(
     across(contains("Observations"), as.integer),
     across(contains("Mean"), ~ round(.x, 3)),
@@ -175,8 +160,6 @@ tab_wide <- tab_long %>%
     across(contains("Max"),  ~ round(.x, 3))
   )
 
-# ------------------------------------------------------------------------------
-# Export (CSV is standard for replication packages)
-# ------------------------------------------------------------------------------
+# Export CSV
 write_csv(tab_wide, out_csv)
 message("Saved table to: ", out_csv)
