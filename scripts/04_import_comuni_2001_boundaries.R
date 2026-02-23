@@ -11,9 +11,9 @@
 # ==============================================================================
 
 suppressPackageStartupMessages({
-  library(fs)      # filesystem utilities
-  library(sf)      # spatial data handling
-  library(here)    # project-root file paths
+  library(fs)      # filesystem utilities: directory creation and file existence checks
+  library(sf)      # handling and import of spatial vector data (GeoPackage)
+  library(here)    # robust file paths relative to project root
 })
 
 # Create output directories if they do not already exist
