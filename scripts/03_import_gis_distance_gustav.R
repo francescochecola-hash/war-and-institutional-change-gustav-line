@@ -34,27 +34,30 @@ if (!file_exists(raw_file)) {
 message("Importing: ", raw_file)
 gdf <- st_read(raw_file, quiet = TRUE)
 
+# Drop geometry (it is not useful for econometric analysis)
+df <- st_drop_geometry(gdf)
+
 # Clean and standardize variable names
-names(gdf) <- names(gdf) |>
+names(df) <- names(df) |>
   str_to_lower() |>
   str_replace_all("[^a-z0-9]+", "_") |>
   str_replace_all("^_|_$", "")
 
 # Create distance in km
-if (!"distance" %in% names(gdf)) {
+if (!"distance" %in% names(df)) {
   stop(
     "Variable 'distance' is missing from the GIS dataset. ",
     "Available variables are: ",
-    paste(names(gdf), collapse = ", ")
+    paste(names(df), collapse = ", ")
   )
 }
 
-gdf <- gdf |>
+df <- df |>
   mutate(distance_km = distance / 1000)
 
 # Save processed dataset
 out_path <- here("data", "processed", "import", "gustav_distance.rds")
-saveRDS(gdf, out_path)
+saveRDS(df, out_path)
 
 message("Saved to:  ", out_path)
 message("comuni_2001_dist_gustav.gpkg imported successfully.")
