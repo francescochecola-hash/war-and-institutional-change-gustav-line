@@ -31,7 +31,7 @@ if (!file_exists(file_gustav_dist)) {
 message("Loading: ", file_gustav_dist)
 df_gustav_dist <- readRDS(file_gustav_dist)
 
-# Select relevant variables (municipality-level)
+# Select relevant variables
 df_selected <- df_gustav_dist |>
   select(
     cod_rip,
@@ -39,8 +39,8 @@ df_selected <- df_gustav_dist |>
     cod_prov,
     pro_com,
     comune,
-    distance,
-    distance_km
+    gustav,
+    distance_gustav_km
   )
 
 message(
