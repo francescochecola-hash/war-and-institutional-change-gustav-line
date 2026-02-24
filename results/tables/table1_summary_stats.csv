@@ -1,30 +1,30 @@
 panel,variable,Italy_Observations,Italy_Mean,Italy_SD,Italy_Min,Italy_Max,Within 100 km from Gustav Line_Observations,Within 100 km from Gustav Line_Mean,Within 100 km from Gustav Line_SD,Within 100 km from Gustav Line_Min,Within 100 km from Gustav Line_Max
-Geographic Factors,Elevation of the City Hall,7996,3.526,2.907,0,20.35,1063,4.281,2.986,0.02,14.33
-Geographic Factors,Max. elevation of the Municipality,5698,789.374,796.054,2,4554,507,789.069,568.055,9,2912
-Demographic and Economic Factors,Population (1921),5490,4796.447,21950.713,84,775203,483,5716.308,35155.129,354,768099
-Demographic and Economic Factors,% Female Population (1921),5490,5088.098,254.646,1972.477,7095.047,483,5202.305,198.938,4016.901,5992.647
-Demographic and Economic Factors,% Illiterates (1921),5698,23.603,20.085,0,85.685,507,48.072,12.187,10.982,78.58
-Demographic and Economic Factors,Population (1951),7996,6.152,31.372,0.074,1651.753,1063,6.369,31.678,0.244,1010.55
-Demographic and Economic Factors,% Female Population (1951),7996,50.422,1.837,32.54,62.952,1063,51.056,1.518,44.993,62.952
-Demographic and Economic Factors,% Illiterates (1951),7996,10.817,9.76,0,57.488,1063,18.564,6.62,2.168,57.488
-Demographic and Economic Factors,% Farmworkers (1929),2477,36.825,19.702,0,230,127,49.15,17.091,7.021,105.9
-Demographic and Economic Factors,% Farmers (1929),2477,16.517,8.901,0,118.995,127,19.488,5.474,5.389,38.024
-Demographic and Economic Factors,Cattle per capita (1929),4881,1.163,1.524,0,17.165,459,1.086,0.952,0.025,9.756
-Demographic and Economic Factors,% Industrial workers (1927),5441,12.317,13.207,0,216.611,482,7.508,5.231,1.161,39.787
-Demographic and Economic Factors,% Plants (1927),5441,4.257,1.978,0,33.63,482,3.906,1.637,0.787,11.477
-Demographic and Economic Factors,% Plants (1951),5401,3.515,6.533,0.387,474.58,496,2.846,0.884,0.966,7.293
-Prewar Electoral Outcomes,% Socialist 1919,7867,20.048,24.498,0,100,1011,9.94,17.97,0,68.209
-Prewar Electoral Outcomes,% Catholic 1919,7867,27.622,20.443,0,107.524,1011,21.232,15.096,0,92.719
-Prewar Electoral Outcomes,% Liberal 1919,7867,24.349,26.671,0,100,1011,33,31.392,0,100
-Prewar Electoral Outcomes,% Socialist 1921,7867,18.4,21.033,0,100,1011,10.075,13.999,0,76.499
-Prewar Electoral Outcomes,% Communist 1921,7867,2.468,6.193,0,85.758,1011,0.67,2.478,0,51.9
-Prewar Electoral Outcomes,% Catholic 1921,7867,25.759,19.31,0,100,1011,15.651,16.34,0,97.677
-Prewar Electoral Outcomes,% Liberal 1921,7867,19.611,28.996,0,100,1011,46.683,30.622,0,100
-Prewar Electoral Outcomes,% Fascist 1921,7867,0.234,2.013,0,80.417,1011,0.291,1.694,0,36.764
-Prewar Electoral Outcomes,% Socialist 1924,7867,7.445,12.067,0,84.965,1011,0.681,3.461,0,58.317
-Prewar Electoral Outcomes,% Communist 1924,7867,1.699,3.895,0,84.965,1011,0.126,0.847,0,13.298
-Prewar Electoral Outcomes,% Catholic 1924,7867,11.815,13.893,0,100,1011,2.794,5.495,0,76.347
-Prewar Electoral Outcomes,% Liberal 1924,7867,3.001,10.101,0,100,1011,0.576,3.459,0,59.104
-Prewar Electoral Outcomes,% Fascist 1924,7867,33.257,34.538,0,100,1011,11.761,30.188,0,100
-Political Attitude during Fascism,"Left-wing citizens under surveillance (1925-42) per 1,000",5490,1.017,1.769,0,72.289,483,0.654,1.207,0,16.908
-Political Attitude during Fascism,"Other citizens under surveillance (1925-42) per 1,000",5490,0.083,0.265,0,5.146,483,0.054,0.155,0,1.341
+Geographic Factors,Elevation of the City Hall,7996,3.526,2.907,0,20.35,1079,4.242,2.99,0.02,14.33
+Geographic Factors,Max. elevation of the Municipality,5698,789.374,796.054,2,4554,518,778.517,567.132,9,2912
+Demographic and Economic Factors,Population (1921),5490,4796.447,21950.713,84,775203,494,6042.093,35126.298,354,768099
+Demographic and Economic Factors,% Female Population (1921),5490,5088.098,254.646,1972.477,7095.047,494,5199.685,205.18,4016.901,5992.647
+Demographic and Economic Factors,% Illiterates (1921),5698,23.603,20.085,0,85.685,518,48.025,12.196,10.982,78.58
+Demographic and Economic Factors,Population (1951),7996,6.152,31.372,0.074,1651.753,1079,6.634,31.748,0.244,1010.55
+Demographic and Economic Factors,% Female Population (1951),7996,50.422,1.837,32.54,62.952,1079,51.059,1.51,44.993,62.952
+Demographic and Economic Factors,% Illiterates (1951),7996,10.817,9.76,0,57.488,1079,18.57,6.596,2.168,57.488
+Demographic and Economic Factors,% Farmworkers (1929),2477,36.825,19.702,0,230,133,49.116,17.033,7.021,105.9
+Demographic and Economic Factors,% Farmers (1929),2477,16.517,8.901,0,118.995,133,19.25,5.463,5.389,38.024
+Demographic and Economic Factors,Cattle per capita (1929),4881,1.163,1.524,0,17.165,470,1.078,0.944,0.025,9.756
+Demographic and Economic Factors,% Industrial workers (1927),5441,12.317,13.207,0,216.611,493,7.563,5.241,1.161,39.787
+Demographic and Economic Factors,% Plants (1927),5441,4.257,1.978,0,33.63,493,3.919,1.652,0.787,11.477
+Demographic and Economic Factors,% Plants (1951),5401,3.515,6.533,0.387,474.58,506,2.862,0.905,0.966,7.293
+Prewar Electoral Outcomes,% Socialist 1919,7867,20.048,24.498,0,100,1027,9.966,17.852,0,68.209
+Prewar Electoral Outcomes,% Catholic 1919,7867,27.622,20.443,0,107.524,1027,21.156,15.194,0,92.719
+Prewar Electoral Outcomes,% Liberal 1919,7867,24.349,26.671,0,100,1027,33.229,31.276,0,100
+Prewar Electoral Outcomes,% Socialist 1921,7867,18.4,21.033,0,100,1027,10.079,13.91,0,76.499
+Prewar Electoral Outcomes,% Communist 1921,7867,2.468,6.193,0,85.758,1027,0.689,2.543,0,51.9
+Prewar Electoral Outcomes,% Catholic 1921,7867,25.759,19.31,0,100,1027,15.635,16.311,0,97.677
+Prewar Electoral Outcomes,% Liberal 1921,7867,19.611,28.996,0,100,1027,46.561,30.55,0,100
+Prewar Electoral Outcomes,% Fascist 1921,7867,0.234,2.013,0,80.417,1027,0.286,1.681,0,36.764
+Prewar Electoral Outcomes,% Socialist 1924,7867,7.445,12.067,0,84.965,1027,0.684,3.441,0,58.317
+Prewar Electoral Outcomes,% Communist 1924,7867,1.699,3.895,0,84.965,1027,0.126,0.842,0,13.298
+Prewar Electoral Outcomes,% Catholic 1924,7867,11.815,13.893,0,100,1027,2.809,5.466,0,76.347
+Prewar Electoral Outcomes,% Liberal 1924,7867,3.001,10.101,0,100,1027,0.567,3.432,0,59.104
+Prewar Electoral Outcomes,% Fascist 1924,7867,33.257,34.538,0,100,1027,12.123,30.617,0,100
+Political Attitude during Fascism,"Left-wing citizens under surveillance (1925-42) per 1,000",5490,1.017,1.769,0,72.289,494,0.677,1.241,0,16.908
+Political Attitude during Fascism,"Other citizens under surveillance (1925-42) per 1,000",5490,0.083,0.265,0,5.146,494,0.053,0.154,0,1.341
