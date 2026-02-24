@@ -96,23 +96,12 @@ merged <- merged %>%
       TRUE ~ (fontana_popres_1921_f / fontana_popres_1921_tot) * 100
     ),
     
-    # Squared coordinates from Gagliarducci et al.
+    # Squared coordinates
     longitude2 = gagliarducci_longitude^2,
     latitude2  = gagliarducci_latitude^2,
     
-    # Signed distance to the Gustav Line:
-    # - if gagliarducci_gustav == 0 -> negative distance_km
-    # - if gagliarducci_gustav == 1 -> positive distance_km
-    # - otherwise (NA/other) -> NA
-    distance_gustav = case_when(
-      is.na(gagliarducci_gustav) | is.na(distance_km) ~ NA_real_,
-      gagliarducci_gustav == 0 ~ -abs(distance_km),
-      gagliarducci_gustav == 1 ~  abs(distance_km),
-      TRUE ~ NA_real_
-    ),
-    
-    # Squared signed distance
-    distance_gustav2 = distance_gustav^2
+    # Squared distance in km 
+    distance_gustav2 = distance_gustav_km^2
   )
 
 # We report basic merge diagnostics to assess coverage relative to the master
