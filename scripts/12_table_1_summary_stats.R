@@ -32,12 +32,14 @@ dir_create(tables_dir)
 # Load data
 df <- readRDS(in_file)
 
-if (!("distance_km" %in% names(df))) {
-  stop("Variable 'distance_km' not found in gustav_line_dataset.rds")
+if (!("distance_gustav_km" %in% names(df))) {
+  stop("Variable 'distance_gustav_km' not found in gustav_line_dataset.rds")
 }
 
 df <- df %>%
-  mutate(within_100km = !is.na(distance_km) & distance_km <= 100)
+  mutate(
+    within_100km = !is.na(distance_gustav_km) & between(distance_gustav_km, -100, 100)
+  )
 
 # Table structure
 table_spec <- tibble::tribble(
