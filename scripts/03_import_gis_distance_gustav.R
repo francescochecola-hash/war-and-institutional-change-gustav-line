@@ -55,6 +55,24 @@ if (!"distance" %in% names(df)) {
 df <- df |>
   mutate(distance_km = distance / 1000)
 
+# Create signed running variable
+if (!"gustav" %in% names(df)) {
+  stop(
+    "Variable 'gustav' is missing from the GIS dataset. ",
+    "Available variables are: ",
+    paste(names(df), collapse = ", ")
+  )
+}
+
+df <- df |>
+  mutate(
+    distance_gustav_km = if_else(
+      gustav == 0,
+      -distance_km,
+      distance_km
+    )
+  )
+
 # Save processed dataset
 out_path <- here("data", "processed", "import", "gustav_distance.rds")
 saveRDS(df, out_path)
