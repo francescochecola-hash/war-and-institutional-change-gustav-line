@@ -13,7 +13,7 @@
 suppressPackageStartupMessages({
   library(fs)     # filesystem utilities: directory creation and file existence checks
   library(dplyr)  # data manipulation and variable construction
-  library(here)    # robust file paths relative to project root
+  library(here)   # robust file paths relative to project root
 })
 
 # Create output directories if they do not already exist
@@ -46,7 +46,6 @@ message(
 df_selected <- df_one_row |>
   select(
     cod_istat103, cod_prov103, cod_reg103,
-    gustav, occupation_NAZI, occupation, tot_bande,
     longitude, latitude, mun_elev,
     analfshare_1951_tot, female_share_1951, popres_1951_tot,
     p_voti2_liberali1919, p_voti2_cattolici1919, p_voti2_socialisti1919,
