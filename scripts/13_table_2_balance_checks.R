@@ -14,7 +14,6 @@
 #   - Treatment: gagliarducci_gustav (1 = North of Gustav Line)
 #   - Controls: gagliarducci_longitude, gagliarducci_latitude (linear)
 #   - SEs: HC1 robust; Conley (spatial HAC) if the fixest package is available
-#   - Shares (labels starting with "%") are reported in percentage points (x100)
 # ==============================================================================
 
 suppressPackageStartupMessages({
@@ -28,9 +27,7 @@ suppressPackageStartupMessages({
   library(here)     # robust file paths relative to project root
 })
 
-# ------------------------------------------------------------------------------
-# Paths (project-root relative via here())
-# ------------------------------------------------------------------------------
+# Paths
 in_file <- here("data", "processed", "merge", "gustav_line_dataset.rds")
 
 results_dir <- here("results")
@@ -40,9 +37,7 @@ out_csv     <- here("results", "tables", "table2_balance_checks.csv")
 dir_create(results_dir)
 dir_create(tables_dir)
 
-# ------------------------------------------------------------------------------
 # Load data
-# ------------------------------------------------------------------------------
 df <- readRDS(in_file)
 
 req_vars <- c("distance_km", "gagliarducci_gustav", "gagliarducci_longitude", "gagliarducci_latitude")
@@ -56,9 +51,7 @@ df <- df %>%
   filter(!is.na(distance_km)) %>%
   filter(distance_km > 0, distance_km <= 100)
 
-# ------------------------------------------------------------------------------
-# Table structure (same covariates as Table 1, organized in panels)
-# ------------------------------------------------------------------------------
+# Table structure
 table_spec <- tibble::tribble(
   ~panel,                           ~var,                                   ~label,
   
@@ -104,11 +97,9 @@ if (length(missing_cov) > 0) {
        paste(missing_cov, collapse = "\n- "))
 }
 
-# ------------------------------------------------------------------------------
 # Transformations to match the paper:
 # - % variables to percentage points (x100) based on label
 # - log transforms for the variables labeled as logs
-# ------------------------------------------------------------------------------
 pct_vars <- table_spec %>%
   filter(grepl("^%\\s", label)) %>%
   pull(var) %>%
@@ -137,9 +128,7 @@ table_spec <- table_spec %>%
     )
   )
 
-# ------------------------------------------------------------------------------
-# Conley SE helper (optional, requires fixest)
-# ------------------------------------------------------------------------------
+# Calculate Conley Standard Error
 have_fixest <- requireNamespace("fixest", quietly = TRUE)
 
 conley_se <- function(formula, data, coef_name,
@@ -154,9 +143,7 @@ conley_se <- function(formula, data, coef_name,
   as.numeric(ct[coef_name, "Std. Error"])
 }
 
-# ------------------------------------------------------------------------------
 # Single regression runner
-# ------------------------------------------------------------------------------
 run_balance <- function(y_var, y_label, panel_name) {
   
   d <- df %>%
@@ -188,9 +175,7 @@ run_balance <- function(y_var, y_label, panel_name) {
   )
 }
 
-# ------------------------------------------------------------------------------
 # Run all balance checks
-# ------------------------------------------------------------------------------
 res <- bind_rows(lapply(seq_len(nrow(table_spec)), function(i) {
   run_balance(
     y_var = table_spec$var[i],
@@ -217,9 +202,7 @@ res <- res %>%
     Adj_R2 = round(Adj_R2, 3)
   )
 
-# ------------------------------------------------------------------------------
-# Export
-# ------------------------------------------------------------------------------
+# Export CSV
 readr::write_csv(res, out_csv, na = "")
 message("Saved table to: ", out_csv)
 
