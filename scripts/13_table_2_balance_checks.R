@@ -6,7 +6,7 @@
 # Purpose:
 #   Run balance checks (covariate continuity) around the Gustav Line using a linear polynomial
 #   in longitude and latitude, and export Table-2 results (coef, robust SE, Conley SE, Adj. R2).
-#   The sample is restricted to municipalities within 100 km from the Gustav Line (excluding dist==0).
+#   The sample is restricted to municipalities within 100 km from the Gustav Line.
 #
 # Inputs:  data/processed/merge/gustav_line_dataset.rds
 # Output:  results/tables/table2_balance_checks.csv
