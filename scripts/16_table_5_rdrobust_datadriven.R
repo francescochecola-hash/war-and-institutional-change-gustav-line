@@ -16,13 +16,13 @@
 # ==============================================================================
 
 suppressPackageStartupMessages({
-  library(dplyr)     # 
+  library(dplyr)     # data manipulation
   library(readr)     # export csv
   library(rdrobust)  # RD estimation (local polynomial, bias-corrected inference)
   library(here)      # robust project-root paths for replication
 })
 
-# Paths (project-root relative)
+# Paths
 in_file <- here("data", "processed", "merge", "gustav_line_dataset.rds")
 
 results_dir <- here("results")
@@ -41,7 +41,7 @@ if (length(missing_req) > 0) {
   stop("Missing required variables:\n- ", paste(missing_req, collapse = "\n- "))
 }
 
-# Outcome variable
+# Outcome variable (Republic vote share in 1946)
 nm <- names(df)
 cands <- nm[grepl("ref", nm, ignore.case = TRUE) & grepl("46|1946", nm, ignore.case = TRUE)]
 cands <- unique(c(
@@ -53,7 +53,7 @@ if (length(cands) == 0) stop("Could not auto-detect the 1946 Republic vote share
 outcome_var <- cands[1]
 message("Using outcome variable: ", outcome_var)
 
-# Build signed running variable x and outcome y
+# Build running variable x and outcome y
 df <- df %>%
   mutate(gustav = suppressWarnings(as.integer(as.character(gustav))))
 
@@ -62,15 +62,15 @@ if (!all(df$gustav %in% c(0L, 1L) | is.na(df$gustav))) {
 }
 
 df <- df %>%
-  filter(!is.na(distance_gustav_km), distance_gustav_km != 0) %>%
+  filter(!is.na(distance_gustav_km), distance_gustav_km != 0) %>% # exclude dist==0
   filter(!is.na(gustav)) %>%
   mutate(
-    x = distance_gustav_km,   # already signed
+    x = distance_gustav_km,         # already signed (North +, South -)
     y = .data[[outcome_var]]
   ) %>%
   filter(!is.na(x), !is.na(y))
 
-# Scale y to percentage points if needed
+# Scale y to percentage points if it looks like share
 mx <- suppressWarnings(max(df$y, na.rm = TRUE))
 if (is.finite(mx) && mx <= 1.5) {
   df <- df %>% mutate(y = y * 100)
@@ -109,9 +109,12 @@ prewar_controls <- c(
 base_controls   <- intersect(base_controls, names(df))
 prewar_controls <- intersect(prewar_controls, names(df))
 
-share_like <- unique(c("gagliarducci_female_share_1951",
-                       "gagliarducci_analfshare_1951_tot",
-                       prewar_controls))
+# shares to percentage points if 0-1
+share_like <- unique(c(
+  "gagliarducci_female_share_1951",
+  "gagliarducci_analfshare_1951_tot",
+  prewar_controls
+))
 share_like <- intersect(share_like, names(df))
 
 for (v in share_like) {
@@ -119,11 +122,16 @@ for (v in share_like) {
   if (is.finite(mxv) && mxv <= 1.5) df[[v]] <- df[[v]] * 100
 }
 
+# log pop 1951
 if ("gagliarducci_popres_1951_tot" %in% names(df)) {
   df <- df %>%
-    mutate(log_pop_1951 = ifelse(!is.na(gagliarducci_popres_1951_tot) &
-                                   gagliarducci_popres_1951_tot > 0,
-                                 log(gagliarducci_popres_1951_tot), NA_real_))
+    mutate(
+      log_pop_1951 = ifelse(
+        !is.na(gagliarducci_popres_1951_tot) & gagliarducci_popres_1951_tot > 0,
+        log(gagliarducci_popres_1951_tot),
+        NA_real_
+      )
+    )
   base_controls <- setdiff(base_controls, "gagliarducci_popres_1951_tot")
   base_controls <- unique(c(base_controls, "log_pop_1951"))
 }
@@ -136,7 +144,8 @@ make_cov_matrix <- function(d, cov_names) {
   as.matrix(d[, cov_names, drop = FALSE])
 }
 
-# Extract results
+# Extract robust inference and local sample sizes
+# Extract robust inference and local sample sizes (robust to rdrobust versions)
 extract_rd <- function(rd_obj) {
   est <- rd_obj$Estimate
   se  <- rd_obj$se
@@ -151,14 +160,54 @@ extract_rd <- function(rd_obj) {
     nrow(est)
   }
   
+  # ---- Local sample sizes (within selected bandwidths) ----
+  # Different rdrobust versions store these in different slots/shapes.
+  get_lr_counts <- function(obj) {
+    candidates <- list(
+      obj$N_h, obj$Nh, obj$N, obj$Nhl, obj$Nh_l, obj$Nh_r
+    )
+    
+    # Case A: N_h / Nh exists as matrix (1x2) or (2x1) or (2,)
+    for (cand in candidates) {
+      if (is.null(cand)) next
+      
+      # If it's a matrix/array, try to pull first two elements safely
+      if (is.matrix(cand) || is.array(cand)) {
+        v <- as.numeric(cand)
+        if (length(v) >= 2) return(c(v[1], v[2]))
+      }
+      
+      # If it's a numeric vector length>=2
+      if (is.atomic(cand) && is.numeric(cand) && length(cand) >= 2) {
+        v <- as.numeric(cand)
+        return(c(v[1], v[2]))
+      }
+    }
+    
+    # Case B: some versions store N as left/right in separate scalars
+    if (!is.null(obj$Nh_l) && !is.null(obj$Nh_r)) {
+      return(c(as.numeric(obj$Nh_l), as.numeric(obj$Nh_r)))
+    }
+    
+    # Fallback: NA
+    c(NA_real_, NA_real_)
+  }
+  
+  lr <- get_lr_counts(rd_obj)
+  n_l <- lr[1]
+  n_r <- lr[2]
+  
   tibble::tibble(
-    tau    = as.numeric(est[pick, 1]),
-    se     = as.numeric(se[pick, 1]),
-    p      = as.numeric(pv[pick, 1]),
-    ci95_l = as.numeric(ci[pick, 1]),
-    ci95_u = as.numeric(ci[pick, 2]),
-    h_l    = as.numeric(bws[1, 1]),
-    h_r    = as.numeric(bws[1, 2])
+    tau     = as.numeric(est[pick, 1]),
+    se      = as.numeric(se[pick, 1]),
+    p       = as.numeric(pv[pick, 1]),
+    ci95_l  = as.numeric(ci[pick, 1]),
+    ci95_u  = as.numeric(ci[pick, 2]),
+    h_l     = as.numeric(bws[1, 1]),
+    h_r     = as.numeric(bws[1, 2]),
+    N_l     = n_l,
+    N_r     = n_r,
+    N_local = n_l + n_r
   )
 }
 
@@ -170,6 +219,7 @@ run_rd <- function(d, with_covariates = FALSE, bwselect = c("mserd", "cerrd")) {
     keep <- complete.cases(cov_mat)
     dd <- d[keep, , drop = FALSE]
     cov_mat <- cov_mat[keep, , drop = FALSE]
+    
     rd <- rdrobust(y = dd$y, x = dd$x, c = 0,
                    covs = cov_mat, bwselect = bwselect)
   } else {
@@ -181,12 +231,12 @@ run_rd <- function(d, with_covariates = FALSE, bwselect = c("mserd", "cerrd")) {
   extract_rd(rd) %>%
     mutate(
       with_covariates = with_covariates,
-      N_used = nrow(dd),
+      N_used = nrow(dd),   # size of dataset passed to rdrobust
       bwselect = bwselect
     )
 }
 
-# Run: MSE-optimal and CER-optimal
+# Run: MSE-optimal and CER-optimal, with/without controls
 res <- dplyr::bind_rows(
   run_rd(df, FALSE, "mserd"),
   run_rd(df, TRUE,  "mserd"),
@@ -194,17 +244,24 @@ res <- dplyr::bind_rows(
   run_rd(df, TRUE,  "cerrd")
 ) %>%
   mutate(
-    spec = ifelse(with_covariates, "With controls", "No controls"),
-    tau = round(tau, 3),
-    se = round(se, 3),
-    p = round(p, 3),
+    spec   = ifelse(with_covariates, "With controls", "No controls"),
+    tau    = round(tau, 3),
+    se     = round(se, 3),
+    p      = round(p, 3),
     ci95_l = round(ci95_l, 3),
     ci95_u = round(ci95_u, 3),
-    h_l = round(h_l, 3),
-    h_r = round(h_r, 3)
+    h_l    = round(h_l, 3),
+    h_r    = round(h_r, 3),
+    N_l    = as.integer(round(N_l)),
+    N_r    = as.integer(round(N_r)),
+    N_local = as.integer(round(N_local))
   ) %>%
-  select(spec, bwselect, N_used, tau, se, p,
-         ci95_l, ci95_u, h_l, h_r) %>%
+  select(
+    spec, bwselect,
+    N_used, N_l, N_r, N_local,
+    tau, se, p, ci95_l, ci95_u,
+    h_l, h_r
+  ) %>%
   arrange(bwselect, spec)
 
 # Export CSV
