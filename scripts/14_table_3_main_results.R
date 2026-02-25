@@ -313,7 +313,7 @@ table_out <- dplyr::bind_rows(
   make_row("Observations", obs_vals)
 )
 
-# Export (wide CSV)
+# Export CSV
 readr::write_csv(table_out, out_csv, na = "", eol = "\n")
 message("Saved table to: ", out_csv)
 
