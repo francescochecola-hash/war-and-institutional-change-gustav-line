@@ -4,7 +4,7 @@
 #
 # Script: 22_figure_5_mccrary_plot.R
 # Purpose:
-#   Plot McCrary-style density test at cutoff using rddensity.
+#   Plot McCrary density test at cutoff using rddensity.
 #
 # Inputs:  data/processed/merge/gustav_line_dataset.rds
 # Output:  results/figures/figure5_mccrary_plot.png
