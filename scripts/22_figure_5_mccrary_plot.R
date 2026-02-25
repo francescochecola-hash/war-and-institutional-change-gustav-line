@@ -3,8 +3,7 @@
 # War and Institutional Change: The Case of Gustav Line
 #
 # Script: 22_figure_5_mccrary_plot.R
-# Purpose:
-#   Plot McCrary density test at cutoff using rddensity.
+# Purpose: Plot McCrary density test at cutoff using rddensity.
 #
 # Inputs:  data/processed/merge/gustav_line_dataset.rds
 # Output:  results/figures/figure5_mccrary_plot.png
