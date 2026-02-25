@@ -4,42 +4,35 @@
 #
 # Script: 17_table_6_rddensity_mccrary.R
 # Purpose:
-#   Run density test at cutoff (McCrary-style) using rddensity and export results.
+#   Run density test at cutoff (McCrary) using rddensity and export results.
 #
 # Inputs:  data/processed/merge/gustav_line_dataset.rds
 # Outputs: results/tables/table6_rddensity_mccrary.csv
-#          results/figures/figure5_rddensity_mccrary_plot.png
 # Notes:
-#   - Running variable: signed distance to Gustav Line (km), cutoff = 0
+#   - Running variable: distance to Gustav Line (km), cutoff = 0
 #   - Excludes municipalities exactly on the line (distance_gustav_km == 0)
 # ==============================================================================
 
 suppressPackageStartupMessages({
   library(dplyr)      # data manipulation
   library(readr)      # CSV export
-  library(rddensity)  # McCrary-style density test for RD running variables
+  library(rddensity)  # McCrary density test for RD running variables
   library(here)       # robust project-root paths for replication
 })
 
-# ------------------------------------------------------------------------------
 # Paths (project-root relative via here())
-# ------------------------------------------------------------------------------
 in_file <- here("data", "processed", "merge", "gustav_line_dataset.rds")
 
 results_dir <- here("results")
 tables_dir  <- here("results", "tables")
-figures_dir <- here("results", "figures")
 
 out_csv <- here("results", "tables", "table6_rddensity_mccrary.csv")
-out_png <- here("results", "figures", "figure5_rddensity_mccrary_plot.png")
 
 if (!dir.exists(results_dir)) dir.create(results_dir)
 if (!dir.exists(tables_dir)) dir.create(tables_dir, recursive = TRUE)
 if (!dir.exists(figures_dir)) dir.create(figures_dir, recursive = TRUE)
 
-# ------------------------------------------------------------------------------
-# Load + build running variable (already signed in distance_gustav_km)
-# ------------------------------------------------------------------------------
+# Load + build running variable (distance from Gustav Line in km)
 df <- readRDS(in_file)
 
 req_vars <- c("distance_gustav_km", "gustav")
@@ -59,15 +52,11 @@ if (sum(df$x < 0) == 0 || sum(df$x > 0) == 0) {
   stop("No support on one side of the cutoff for x. Check distance_gustav_km sign coding.")
 }
 
-# ------------------------------------------------------------------------------
 # Density test at cutoff 0
-# ------------------------------------------------------------------------------
 den <- rddensity(X = df$x, c = 0)
 sum_den <- summary(den)
 
-# ------------------------------------------------------------------------------
 # Extract robust p-value in a version-robust way
-# ------------------------------------------------------------------------------
 p_val <- NA_real_
 
 # 1) Try structured extraction if available
@@ -103,9 +92,7 @@ if (!is.finite(p_val)) {
   }
 }
 
-# ------------------------------------------------------------------------------
 # Save CSV
-# ------------------------------------------------------------------------------
 out <- tibble::tibble(
   test = "rddensity (McCrary-style)",
   cutoff = 0,
@@ -117,26 +104,3 @@ out <- tibble::tibble(
 
 readr::write_csv(out, out_csv, na = "", eol = "\n")
 message("Saved: ", out_csv)
-
-# ------------------------------------------------------------------------------
-# Plot density around cutoff
-#   rdplotdensity() signature differs across versions (some accept c=, some don't)
-# ------------------------------------------------------------------------------
-png(filename = out_png, width = 1200, height = 800, res = 150)
-
-ok <- TRUE
-tryCatch(
-  {
-    rddensity::rdplotdensity(den, X = df$x, c = 0)  # newer versions
-  },
-  error = function(e) {
-    ok <<- FALSE
-  }
-)
-
-if (!ok) {
-  rddensity::rdplotdensity(den, X = df$x)          # older versions
-}
-
-dev.off()
-message("Saved: ", out_png)
