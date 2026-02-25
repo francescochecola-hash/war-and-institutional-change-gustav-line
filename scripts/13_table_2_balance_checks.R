@@ -11,9 +11,9 @@
 # Inputs:  data/processed/merge/gustav_line_dataset.rds
 # Output:  results/tables/table2_balance_checks.csv
 # Notes:
-#   - Treatment: gagliarducci_gustav (1 = North of Gustav Line)
-#   - Controls: gagliarducci_longitude, gagliarducci_latitude (linear)
-#   - SEs: HC1 robust; Conley (spatial HAC) if the fixest package is available
+#   - Treatment: gustav (1 = North of Gustav Line)
+#   - Controls: longitude, latitude (linear)
+#   - SEs: HC1 robust; Conley (spatial HAC)
 # ==============================================================================
 
 suppressPackageStartupMessages({
@@ -40,16 +40,24 @@ dir_create(tables_dir)
 # Load data
 df <- readRDS(in_file)
 
-req_vars <- c("distance_km", "gagliarducci_gustav", "gagliarducci_longitude", "gagliarducci_latitude")
+# Stars helper based on |t| thresholds:
+# *   if |t| >= 1.64
+# **  if |t| >= 1.96
+# *** if |t| >= 2.58
+star_from_t <- function(t) {
+  if (is.na(t)) return("")
+  at <- abs(t)
+  if (at >= 2.58) return("***")
+  if (at >= 1.96) return("**")
+  if (at >= 1.64) return("*")
+  ""
+}
+
+req_vars <- c("distance_gustav_km", "gustav", "gagliarducci_longitude", "gagliarducci_latitude")
 missing_req <- setdiff(req_vars, names(df))
 if (length(missing_req) > 0) {
   stop("Missing required variables:\n- ", paste(missing_req, collapse = "\n- "))
 }
-
-# Restrict sample: within 100 km, exclude exactly-on-the-line observations
-df <- df %>%
-  filter(!is.na(distance_km)) %>%
-  filter(distance_km > 0, distance_km <= 100)
 
 # Table structure
 table_spec <- tibble::tribble(
@@ -97,9 +105,7 @@ if (length(missing_cov) > 0) {
        paste(missing_cov, collapse = "\n- "))
 }
 
-# Transformations to match the paper:
-# - % variables to percentage points (x100) based on label
-# - log transforms for the variables labeled as logs
+# Convert shares to percentage points (x100) based on label
 pct_vars <- table_spec %>%
   filter(grepl("^%\\s", label)) %>%
   pull(var) %>%
@@ -108,6 +114,7 @@ pct_vars <- table_spec %>%
 df <- df %>%
   mutate(across(all_of(pct_vars), ~ .x * 100))
 
+# Log transforms to match labels
 log_pop_1951_var <- "gagliarducci_popres_1951_tot"
 log_cattle_var   <- "fontana_bestiame_1929_shpop"
 
@@ -128,7 +135,7 @@ table_spec <- table_spec %>%
     )
   )
 
-# Calculate Conley Standard Error
+# Calculate Conley Standard Error (if fixest is available)
 have_fixest <- requireNamespace("fixest", quietly = TRUE)
 
 conley_se <- function(formula, data, coef_name,
@@ -144,44 +151,71 @@ conley_se <- function(formula, data, coef_name,
 }
 
 # Single regression runner
-run_balance <- function(y_var, y_label, panel_name) {
+run_balance <- function(y_var, y_label, panel_name, bandwidth_km) {
   
   d <- df %>%
-    select(all_of(c(y_var, "gagliarducci_gustav", "gagliarducci_longitude", "gagliarducci_latitude"))) %>%
+    filter(!is.na(distance_gustav_km)) %>%
+    filter(between(distance_gustav_km, -bandwidth_km, bandwidth_km)) %>%
+    # exclude exactly-on-the-line observations
+    filter(distance_gustav_km != 0) %>%
+    select(all_of(c(
+      y_var,
+      "gustav",
+      "gagliarducci_longitude",
+      "gagliarducci_latitude"
+    ))) %>%
     filter(!is.na(.data[[y_var]]))
   
-  fml <- as.formula(paste0(y_var, " ~ gagliarducci_gustav + gagliarducci_longitude + gagliarducci_latitude"))
+  fml <- as.formula(paste0(y_var, " ~ gustav + gagliarducci_longitude + gagliarducci_latitude"))
   m <- lm(fml, data = d)
   
   vc <- sandwich::vcovHC(m, type = "HC1")
   ct <- lmtest::coeftest(m, vcov. = vc)
   
-  coef_name <- "gagliarducci_gustav"
+  coef_name <- "gustav"
   beta <- as.numeric(ct[coef_name, "Estimate"])
   se_rob <- as.numeric(ct[coef_name, "Std. Error"])
   
+  # Stars based on |t| = |beta/se|
+  stars_rob <- star_from_t(beta / se_rob)
+  
   se_conley <- conley_se(fml, d, coef_name = coef_name)
+  stars_conley <- if (is.na(se_conley)) "" else star_from_t(beta / se_conley)
   
   adj_r2 <- summary(m)$adj.r.squared
+  
+  # format SEs with stars (as strings)
+  robust_se_star <- paste0(formatC(se_rob, format = "f", digits = 3), stars_rob)
+  conley_se_star <- if (is.na(se_conley)) {
+    ""
+  } else {
+    paste0(formatC(se_conley, format = "f", digits = 3), stars_conley)
+  }
   
   tibble(
     panel = panel_name,
     variable = y_label,
+    bandwidth_km = bandwidth_km,
     Observations = nobs(m),
     Coefficient = beta,
-    Robust_SE = se_rob,
-    Conley_SE = se_conley,
+    Robust_SE = robust_se_star,
+    Conley_SE = conley_se_star,
     Adj_R2 = adj_r2
   )
 }
 
-# Run all balance checks
-res <- bind_rows(lapply(seq_len(nrow(table_spec)), function(i) {
-  run_balance(
-    y_var = table_spec$var[i],
-    y_label = table_spec$label[i],
-    panel_name = table_spec$panel[i]
-  )
+# Run balance checks for multiple bandwidths
+bandwidths <- c(100, 75, 50)
+
+res <- bind_rows(lapply(bandwidths, function(h) {
+  bind_rows(lapply(seq_len(nrow(table_spec)), function(i) {
+    run_balance(
+      y_var = table_spec$var[i],
+      y_label = table_spec$label[i],
+      panel_name = table_spec$panel[i],
+      bandwidth_km = h
+    )
+  }))
 }))
 
 panel_order <- c(
@@ -194,11 +228,12 @@ panel_order <- c(
 res <- res %>%
   mutate(
     panel = factor(panel, levels = panel_order),
-    variable = factor(variable, levels = table_spec$label)
+    variable = factor(variable, levels = table_spec$label),
+    bandwidth_km = factor(bandwidth_km, levels = c(50, 75, 100))
   ) %>%
-  arrange(panel, variable) %>%
+  arrange(bandwidth_km, panel, variable) %>%
   mutate(
-    across(c(Coefficient, Robust_SE, Conley_SE), ~ round(.x, 3)),
+    Coefficient = round(Coefficient, 3),
     Adj_R2 = round(Adj_R2, 3)
   )
 
