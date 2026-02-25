@@ -17,11 +17,11 @@
 # ==============================================================================
 
 suppressPackageStartupMessages({
-  library(dplyr)
-  library(readr)
-  library(sandwich)
-  library(lmtest)
-  library(here)   # robust paths for replication
+  library(dplyr)     # data manipulation
+  library(readr)     # csv export
+  library(sandwich)  # robust vcov
+  library(lmtest)    # coeftest
+  library(here)      # robust file paths relative to project root
 })
 
 # Paths (project-root relative via here())
@@ -74,7 +74,7 @@ if (is.numeric(df[[outcome_var]])) {
   }
 }
 
-# Controls (ONLY the ones you requested)
+# Controls
 base_controls <- c(
   "gagliarducci_mun_elev",
   "gagliarducci_popres_1951_tot",
@@ -137,7 +137,7 @@ star_from_t <- function(t) {
   ""
 }
 
-# Conley SE via fixest (optional)
+# Conley SE
 have_fixest <- requireNamespace("fixest", quietly = TRUE)
 
 conley_se <- function(formula, data, coef_name,
