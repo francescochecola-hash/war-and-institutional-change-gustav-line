@@ -2,7 +2,7 @@
 # Francesco Checola
 # War and Institutional Change: The Case of Gustav Line
 #
-# Script: 18_figure_3_rd_plot.R
+# Script: 21_figure_3_rd_plot.R
 # Purpose:
 #   Create the main RD figure (binned scatter + fitted curves with CI) for
 #   Republic vote share in 1946 against signed distance to the Gustav Line.
