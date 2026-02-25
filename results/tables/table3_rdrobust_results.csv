@@ -1,5 +1,7 @@
 spec,bandwidth_type,bandwidth_km,N_used,tau,se,p,ci95_l,ci95_u,h_l,h_r
-No controls,Manual (fixed),75,701,13.814,19.555,0.48,-24.514,52.142,75,75
-With controls,Manual (fixed),75,651,14.9,19.809,0.452,-23.925,53.724,75,75
-No controls,Manual (fixed),100,1002,8.124,7.65,0.288,-6.869,23.118,100,100
-With controls,Manual (fixed),100,952,2.399,7.578,0.752,-12.454,17.253,100,100
+No controls,Manual (fixed),50,483,4.553,4.399,0.301,-4.068,13.174,50,50
+With controls,Manual (fixed),50,429,9.234,3.89,0.018,1.609,16.859,50,50
+No controls,Manual (fixed),75,724,5.704,3.535,0.107,-1.225,12.633,75,75
+With controls,Manual (fixed),75,669,6.379,3.279,0.052,-0.048,12.806,75,75
+No controls,Manual (fixed),100,1023,9.764,2.959,0.001,3.964,15.564,100,100
+With controls,Manual (fixed),100,965,8.109,2.854,0.004,2.515,13.703,100,100
