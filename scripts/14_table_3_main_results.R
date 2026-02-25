@@ -2,19 +2,18 @@
 # Francesco Checola
 # War and Institutional Change: The Case of Gustav Line
 #
-# Script: 11_main_results.R
+# Script: 14_table_3_main_results.R
 # Purpose:
 #   Replicate Table 3 (Main Results) in the same layout as in the slide:
 #   columns (1)-(6) for <100/<75/<50 km (no controls) and <100/<75/<50 km (with controls),
 #   for Panel A (poly in longitude/latitude), Panel B (poly in signed distance), and OLS.
-#   Export a wide CSV table for replication.
 #
 # Inputs:  data/processed/merge/gustav_line_dataset.rds
 # Output:  results/tables/table3_main_results.csv
 # Notes:
-#   - SEs in table: Robust (HC1), as in the screenshot.
+#   - SEs in table: Robust (HC1) and Conley (spatial HAC).
 #   - Controls (when ON): Elevation City Hall + log(pop 1951) + %female1951 + %illiterates1951
-#     + ALL prewar electoral outcomes (1919/1921/1924).
+#     + prewar electoral outcomes (1919/1921/1924).
 # ==============================================================================
 
 suppressPackageStartupMessages({
@@ -22,34 +21,29 @@ suppressPackageStartupMessages({
   library(readr)
   library(sandwich)
   library(lmtest)
+  library(here)   # robust paths for replication
 })
 
-# ------------------------------------------------------------------------------
-# Paths
-# ------------------------------------------------------------------------------
-in_file <- "data/processed/merge/gustav_line_dataset.rds"
+# Paths (project-root relative via here())
+in_file <- here("data", "processed", "merge", "gustav_line_dataset.rds")
 
-results_dir <- "results"
-tables_dir  <- file.path(results_dir, "tables")
-out_csv     <- file.path(tables_dir, "table3_main_results.csv")
+results_dir <- here("results")
+tables_dir  <- here("results", "tables")
+out_csv     <- here("results", "tables", "table3_main_results.csv")
 
 if (!dir.exists(results_dir)) dir.create(results_dir)
 if (!dir.exists(tables_dir)) dir.create(tables_dir, recursive = TRUE)
 
-# ------------------------------------------------------------------------------
 # Load data + required vars
-# ------------------------------------------------------------------------------
 df <- readRDS(in_file)
 
-req_vars <- c("dist_gustav_km", "gagliarducci_gustav", "gagliarducci_longitude", "gagliarducci_latitude")
+req_vars <- c("distance_gustav_km", "gustav", "gagliarducci_longitude", "gagliarducci_latitude")
 missing_req <- setdiff(req_vars, names(df))
 if (length(missing_req) > 0) {
   stop("Missing required variables:\n- ", paste(missing_req, collapse = "\n- "))
 }
 
-# ------------------------------------------------------------------------------
-# Outcome: Republic vote share in 1946 (AUTO-detect; set manually if needed)
-# ------------------------------------------------------------------------------
+# Outcome: Republic vote share in 1946
 nm <- names(df)
 cands <- nm[grepl("ref", nm, ignore.case = TRUE) & grepl("46|1946", nm, ignore.case = TRUE)]
 cands <- unique(c(
@@ -63,13 +57,13 @@ if (length(cands) == 0) {
 outcome_var <- cands[1]
 message("Using outcome variable: ", outcome_var)
 
-# ------------------------------------------------------------------------------
-# Sample restrictions
-# ------------------------------------------------------------------------------
+# Sample restrictions + running var
+# - Use signed distance from GIS: distance_gustav_km
+# - Exclude exactly-on-the-line observations (distance == 0)
 df <- df %>%
-  filter(!is.na(dist_gustav_km)) %>%
-  filter(dist_gustav_km > 0) %>%                      # exclude dist==0
-  mutate(signed_dist_km = ifelse(gagliarducci_gustav == 1, dist_gustav_km, -dist_gustav_km))
+  filter(!is.na(distance_gustav_km)) %>%
+  filter(distance_gustav_km != 0) %>%
+  mutate(signed_dist_km = distance_gustav_km)
 
 # Scale outcome to percentage points if in [0,1]
 if (is.numeric(df[[outcome_var]])) {
@@ -80,9 +74,7 @@ if (is.numeric(df[[outcome_var]])) {
   }
 }
 
-# ------------------------------------------------------------------------------
 # Controls (ONLY the ones you requested)
-# ------------------------------------------------------------------------------
 base_controls <- c(
   "gagliarducci_mun_elev",
   "gagliarducci_popres_1951_tot",
@@ -132,40 +124,57 @@ if ("gagliarducci_popres_1951_tot" %in% names(df)) {
 all_controls <- unique(c(base_controls, prewar_controls))
 all_controls <- intersect(all_controls, names(df))
 
-# ------------------------------------------------------------------------------
-# Robust regression helpers + stars
-# ------------------------------------------------------------------------------
-star_from_p <- function(p) {
-  if (is.na(p)) return("")
-  if (p < 0.01) return("***")
-  if (p < 0.05) return("**")
-  if (p < 0.10) return("*")
+# Stars helper based on |t| thresholds:
+# *   if |t| >= 1.64
+# **  if |t| >= 1.96
+# *** if |t| >= 2.58
+star_from_t <- function(t) {
+  if (is.na(t)) return("")
+  at <- abs(t)
+  if (at >= 2.58) return("***")
+  if (at >= 1.96) return("**")
+  if (at >= 1.64) return("*")
   ""
 }
 
-fit_extract <- function(data, fml, coef_name = "gagliarducci_gustav") {
+# Conley SE via fixest (optional)
+have_fixest <- requireNamespace("fixest", quietly = TRUE)
+
+conley_se <- function(formula, data, coef_name,
+                      lat = "gagliarducci_latitude",
+                      lon = "gagliarducci_longitude") {
+  if (!have_fixest) return(NA_real_)
+  m <- fixest::feols(formula, data = data, vcov = fixest::vcov_conley(lat = lat, lon = lon))
+  ct <- fixest::coeftable(m)
+  if (!(coef_name %in% rownames(ct))) return(NA_real_)
+  as.numeric(ct[coef_name, "Std. Error"])
+}
+
+fit_extract <- function(data, fml, coef_name = "gustav") {
   m  <- lm(fml, data = data)
   vc <- sandwich::vcovHC(m, type = "HC1")
   ct <- lmtest::coeftest(m, vcov. = vc)
   
+  beta  <- as.numeric(ct[coef_name, "Estimate"])
+  se_rob <- as.numeric(ct[coef_name, "Std. Error"])
+  se_con <- conley_se(fml, data, coef_name = coef_name)
+  
   list(
-    n     = nobs(m),
-    beta  = as.numeric(ct[coef_name, "Estimate"]),
-    se    = as.numeric(ct[coef_name, "Std. Error"]),
-    p     = as.numeric(ct[coef_name, "Pr(>|t|)"]),
-    adjr2 = summary(m)$adj.r.squared
+    n        = nobs(m),
+    beta     = beta,
+    se_rob   = se_rob,
+    se_con   = se_con,
+    stars    = star_from_t(beta / se_rob),  # stars based on robust t-stat
+    adjr2    = summary(m)$adj.r.squared
   )
 }
 
-fmt_cell <- function(beta, se, p, digits = 3) {
-  if (is.na(beta) || is.na(se)) return("")
-  paste0(
-    formatC(beta, format = "f", digits = digits),
-    star_from_p(p),
-    "\n(",
-    formatC(se, format = "f", digits = digits),
-    ")"
-  )
+fmt_cell <- function(beta, se_rob, se_con, stars, digits = 3) {
+  if (is.na(beta) || is.na(se_rob)) return("")
+  beta_s <- paste0(formatC(beta, format = "f", digits = digits), stars)
+  rob_s  <- paste0("(", formatC(se_rob, format = "f", digits = digits), ")")
+  con_s  <- if (is.na(se_con)) "" else paste0("[", formatC(se_con, format = "f", digits = digits), "]")
+  paste(beta_s, rob_s, con_s, sep = "\n")
 }
 
 fmt_num <- function(x, digits = 3) {
@@ -177,9 +186,7 @@ make_formula <- function(outcome, rhs_terms) {
   as.formula(paste(outcome, "~", paste(rhs_terms, collapse = " + ")))
 }
 
-# ------------------------------------------------------------------------------
-# Column definitions (as in the slide)
-# ------------------------------------------------------------------------------
+# Column definitions (bandwidths: 100/75/50 km, with/without controls)
 col_defs <- tibble::tribble(
   ~col_id,         ~bw,  ~controls,
   "(1) < 100 km",  100,  FALSE,
@@ -192,27 +199,25 @@ col_defs <- tibble::tribble(
 cols <- col_defs$col_id
 empty_cols <- setNames(rep("", length(cols)), cols)
 
-# ------------------------------------------------------------------------------
-# Table 3 specs (like the slide)
-# ------------------------------------------------------------------------------
-A_linear_rhs <- c("gagliarducci_gustav", "gagliarducci_longitude", "gagliarducci_latitude")
+# Table 3 specifications
+A_linear_rhs <- c("gustav", "gagliarducci_longitude", "gagliarducci_latitude")
 A_quad_rhs   <- c(
-  "gagliarducci_gustav",
+  "gustav",
   "gagliarducci_longitude", "gagliarducci_latitude",
   "I(gagliarducci_longitude^2)", "I(gagliarducci_latitude^2)",
   "I(gagliarducci_longitude*gagliarducci_latitude)"
 )
 
-B_linear_rhs <- c("gagliarducci_gustav", "signed_dist_km")
-B_quad_rhs   <- c("gagliarducci_gustav", "signed_dist_km", "I(signed_dist_km^2)")
+B_linear_rhs <- c("gustav", "signed_dist_km")
+B_quad_rhs   <- c("gustav", "signed_dist_km", "I(signed_dist_km^2)")
 
-OLS_rhs <- c("gagliarducci_gustav")
+OLS_rhs <- c("gustav")
 
-# ------------------------------------------------------------------------------
 # Estimation for one column
-# ------------------------------------------------------------------------------
 estimate_for_col <- function(rhs_base, bw, controls_on) {
-  d <- df %>% filter(dist_gustav_km <= bw)
+  d <- df %>%
+    filter(between(distance_gustav_km, -bw, bw)) %>%
+    filter(distance_gustav_km != 0)
   
   rhs <- rhs_base
   geo_flag   <- "No"
@@ -225,10 +230,10 @@ estimate_for_col <- function(rhs_base, bw, controls_on) {
   }
   
   fml <- make_formula(outcome_var, rhs)
-  est <- fit_extract(d, fml)
+  est <- fit_extract(d, fml, coef_name = "gustav")
   
   list(
-    cell  = fmt_cell(est$beta, est$se, est$p),
+    cell  = fmt_cell(est$beta, est$se_rob, est$se_con, est$stars),
     adjr2 = fmt_num(est$adjr2),
     n     = as.character(est$n),
     geo   = geo_flag,
@@ -251,7 +256,7 @@ extract_field <- function(block, field) {
   vals
 }
 
-# CRITICAL FIX: force 6 real columns (not a single “value” column)
+# Force 6 real columns
 make_row <- function(row_label, values_named) {
   stopifnot(all(names(values_named) %in% cols))
   out <- data.frame(row = row_label, stringsAsFactors = FALSE)
@@ -259,9 +264,7 @@ make_row <- function(row_label, values_named) {
   tibble::as_tibble(out)
 }
 
-# ------------------------------------------------------------------------------
 # Compute blocks
-# ------------------------------------------------------------------------------
 A_lin  <- get_block(A_linear_rhs)
 A_quad <- get_block(A_quad_rhs)
 
@@ -274,9 +277,7 @@ geo_flags   <- extract_field(OLS_b, "geo")
 elect_flags <- extract_field(OLS_b, "elect")
 obs_vals    <- extract_field(OLS_b, "n")
 
-# ------------------------------------------------------------------------------
-# Assemble final wide table (exact layout)
-# ------------------------------------------------------------------------------
+# Assemble final wide table
 table_out <- dplyr::bind_rows(
   make_row("Dependent variable: Republic vote share in 1946", empty_cols),
   make_row("", empty_cols),
@@ -312,8 +313,10 @@ table_out <- dplyr::bind_rows(
   make_row("Observations", obs_vals)
 )
 
-# ------------------------------------------------------------------------------
 # Export (wide CSV)
-# ------------------------------------------------------------------------------
 readr::write_csv(table_out, out_csv, na = "", eol = "\n")
 message("Saved table to: ", out_csv)
+
+if (!have_fixest) {
+  message("Note: fixest not installed -> Conley SEs are blank. Install 'fixest' to compute Conley SEs.")
+}
