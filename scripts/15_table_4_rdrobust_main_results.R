@@ -12,17 +12,17 @@
 # Output:  results/tables/table3_rdrobust_results.csv
 # Notes:
 #   - Running variable: signed distance to the Gustav Line (km), cutoff c = 0.
-#     North of the line: positive; South: negative.
-#   - Excludes municipalities exactly on the line (dist_gustav_km == 0).
-#   - By default uses MANUAL bandwidths (100/75/50 km) to mirror Table 3, but it will
-#     automatically skip bandwidths with too few observations on one side of the cutoff.
-#   - rdrobust provides RD-robust inference (heteroskedasticity-robust), not Conley SEs.
+#     North of the line: positive; South: negative;
+#   - Excludes municipalities exactly on the line (dist_gustav_km == 0);
+#   - By default uses manual bandwidths (100/75/50 km) to mirror Table 3;
+#   - rdrobust provides RD-robust inference (heteroskedasticity-robust).
 # ==============================================================================
 
 suppressPackageStartupMessages({
   library(dplyr)     # data manipulation
   library(readr)     # csv export
-  library(rdrobust)
+  library(rdrobust)  # RD estimation using the Calonico-Cattaneo-Titiunik framework 
+                     # (local polynomial RD with robust bias-corrected inference)
   library(here)      # robust paths for replication
 })
 
@@ -31,7 +31,7 @@ in_file <- here("data", "processed", "merge", "gustav_line_dataset.rds")
 
 results_dir <- here("results")
 tables_dir  <- here("results", "tables")
-out_csv     <- here("results", "tables", "table3_rdrobust_results.csv")
+out_csv     <- here("results", "tables", "table4_rdrobust_main_results.csv")
 
 if (!dir.exists(results_dir)) dir.create(results_dir)
 if (!dir.exists(tables_dir)) dir.create(tables_dir, recursive = TRUE)
