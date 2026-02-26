@@ -137,6 +137,18 @@ merged <- comuni %>%
   left_join(ref46,   by = "cod_istat103")
 
 # ------------------------------------------------------------------------------
+# 4b) Manual correction: occupation for cod_istat103 == 58122
+# ------------------------------------------------------------------------------
+merged <- merged %>%
+  mutate(
+    occupation = if_else(
+      cod_istat103 == 58122,
+      1.073973,
+      occupation
+    )
+  )
+
+# ------------------------------------------------------------------------------
 # 5) Keep only requested columns + geometry
 # ------------------------------------------------------------------------------
 geom_col <- attr(merged, "sf_column")
@@ -175,5 +187,3 @@ merged <- merged %>%
 # ------------------------------------------------------------------------------
 saveRDS(merged, out_rds)
 message("Saved: ", out_rds)
-message("Geometry: ", paste(unique(as.character(st_geometry_type(merged))), collapse = ", "))
-message("CRS EPSG: ", st_crs(merged)$epsg)
