@@ -1,0 +1,127 @@
+
+Log file: C:/Users/franc/OneDrive/Immagini/Documenti/Gustav_Line/war-and-institutional-change-gustav-line/results/run_all_log.txt 
+
+Running: C:/Users/franc/OneDrive/Immagini/Documenti/Gustav_Line/war-and-institutional-change-gustav-line/scripts/01_import_replication_data.R 
+Running: C:/Users/franc/OneDrive/Immagini/Documenti/Gustav_Line/war-and-institutional-change-gustav-line/scripts/02_import_referendum_1946_data.R 
+indexing referendum-19460602.txt [====================================================] 2.15GB/s, eta:  0s                                                                                                          Running: C:/Users/franc/OneDrive/Immagini/Documenti/Gustav_Line/war-and-institutional-change-gustav-line/scripts/03_import_gis_distance_gustav.R 
+Running: C:/Users/franc/OneDrive/Immagini/Documenti/Gustav_Line/war-and-institutional-change-gustav-line/scripts/04_import_comuni_2001_boundaries.R 
+Driver: GPKG 
+Available layers:
+   layer_name geometry_type features fields              crs_name
+1 comuni_2001 Multi Polygon     8101     13 WGS 84 / UTM zone 32N
+Running: C:/Users/franc/OneDrive/Immagini/Documenti/Gustav_Line/war-and-institutional-change-gustav-line/scripts/05_import_gustav_line.R 
+Driver: GPKG 
+Available layers:
+   layer_name geometry_type features fields              crs_name
+1 gustav_line   Line String        1      3 WGS 84 / UTM zone 32N
+Running: C:/Users/franc/OneDrive/Immagini/Documenti/Gustav_Line/war-and-institutional-change-gustav-line/scripts/06_select_fontana_et_al_data.R 
+Running: C:/Users/franc/OneDrive/Immagini/Documenti/Gustav_Line/war-and-institutional-change-gustav-line/scripts/07_select_gagliarducci_et_al_data.R 
+Running: C:/Users/franc/OneDrive/Immagini/Documenti/Gustav_Line/war-and-institutional-change-gustav-line/scripts/08_select_referendum_1946_data.R 
+# A tibble: 831 × 6
+   cod_istat103 name                   province103 region103 comune_key             provincia_key
+          <dbl> <chr>                  <chr>       <chr>     <chr>                  <chr>        
+ 1         1017 BALDISSERO CANAVESE    TORINO      PIEMONTE  BALDISSERO CANAVESE    TORINO       
+ 2         1029 BORGIALLO              TORINO      PIEMONTE  BORGIALLO              TORINO       
+ 3         1042 BUROLO                 TORINO      PIEMONTE  BUROLO                 TORINO       
+ 4         1052 CANISCHIO              TORINO      PIEMONTE  CANISCHIO              TORINO       
+ 5         1053 CANTALUPA              TORINO      PIEMONTE  CANTALUPA              TORINO       
+ 6         1068 CASTIGLIONE TORINESE   TORINO      PIEMONTE  CASTIGLIONE TORINESE   TORINO       
+ 7         1069 CAVAGNOLO              TORINO      PIEMONTE  CAVAGNOLO              TORINO       
+ 8         1079 CHIESANUOVA            TORINO      PIEMONTE  CHIESANUOVA            TORINO       
+ 9         1083 CICONIO                TORINO      PIEMONTE  CICONIO                TORINO       
+10         1091 COLLERETTO CASTELNUOVO TORINO      PIEMONTE  COLLERETTO CASTELNUOVO TORINO       
+11         1092 COLLERETTO GIACOSA     TORINO      PIEMONTE  COLLERETTO GIACOSA     TORINO       
+12         1095 COSSANO CANAVESE       TORINO      PIEMONTE  COSSANO CANAVESE       TORINO       
+13         1101 FAVRIA                 TORINO      PIEMONTE  FAVRIA                 TORINO       
+14         1109 FRONT                  TORINO      PIEMONTE  FRONT                  TORINO       
+15         1122 INVERSO PINASCA        TORINO      PIEMONTE  INVERSO PINASCA        TORINO       
+16         1123 ISOLABELLA             TORINO      PIEMONTE  ISOLABELLA             TORINO       
+17         1126 LA CASSA               TORINO      PIEMONTE  LA CASSA               TORINO       
+18         1136 LOMBRIASCO             TORINO      PIEMONTE  LOMBRIASCO             TORINO       
+19         1137 LORANZE'               TORINO      PIEMONTE  LORANZE                TORINO       
+20         1140 LUSERNETTA             TORINO      PIEMONTE  LUSERNETTA             TORINO       
+21         1151 MEUGLIANO              TORINO      PIEMONTE  MEUGLIANO              TORINO       
+22         1153 MOMBELLO DI TORINO     TORINO      PIEMONTE  MOMBELLO DI TORINO     TORINO       
+23         1162 MONTEU DA PO           TORINO      PIEMONTE  MONTEU DA PO           TORINO       
+24         1167 NOMAGLIO               TORINO      PIEMONTE  NOMAGLIO               TORINO       
+25         1170 OGLIANICO              TORINO      PIEMONTE  OGLIANICO              TORINO       
+26         1174 OSASIO                 TORINO      PIEMONTE  OSASIO                 TORINO       
+27         1177 PALAZZO CANAVESE       TORINO      PIEMONTE  PALAZZO CANAVESE       TORINO       
+28         1179 PARELLA                TORINO      PIEMONTE  PARELLA                TORINO       
+29         1182 PECCO                  TORINO      PIEMONTE  PECCO                  TORINO       
+30         1185 PEROSA CANAVESE        TORINO      PIEMONTE  PEROSA CANAVESE        TORINO       
+31         1187 PERTUSIO               TORINO      PIEMONTE  PERTUSIO               TORINO       
+32         1198 POMARETTO              TORINO      PIEMONTE  POMARETTO              TORINO       
+33         1205 PRAROSTINO             TORINO      PIEMONTE  PRAROSTINO             TORINO       
+34         1206 PRASCORSANO            TORINO      PIEMONTE  PRASCORSANO            TORINO       
+35         1208 QUAGLIUZZO             TORINO      PIEMONTE  QUAGLIUZZO             TORINO       
+36         1218 RIVAROSSA              TORINO      PIEMONTE  RIVAROSSA              TORINO       
+37         1222 ROLETTO                TORINO      PIEMONTE  ROLETTO                TORINO       
+38         1223 ROMANO CANAVESE        TORINO      PIEMONTE  ROMANO CANAVESE        TORINO       
+39         1226 RORA'                  TORINO      PIEMONTE  RORA                   TORINO       
+40         1227 ROURE                  TORINO      PIEMONTE  ROURE                  TORINO       
+41         1234 SALZA DI PINEROLO      TORINO      PIEMONTE  SALZA DI PINEROLO      TORINO       
+42         1237 SAN CARLO CANAVESE     TORINO      PIEMONTE  SAN CARLO CANAVESE     TORINO       
+43         1238 SAN COLOMBANO BELMONTE TORINO      PIEMONTE  SAN COLOMBANO BELMONTE TORINO       
+44         1241 SANGANO                TORINO      PIEMONTE  SANGANO                TORINO       
+45         1252 SAN RAFFAELE CIMENA    TORINO      PIEMONTE  SAN RAFFAELE CIMENA    TORINO       
+46         1258 SAUZE DI CESANA        TORINO      PIEMONTE  SAUZE DI CESANA        TORINO       
+47         1259 SAUZE D'OULX           TORINO      PIEMONTE  SAUZE DOULX            TORINO       
+48         1261 SCARMAGNO              TORINO      PIEMONTE  SCARMAGNO              TORINO       
+49         1264 SETTIMO ROTTARO        TORINO      PIEMONTE  SETTIMO ROTTARO        TORINO       
+50         1266 SETTIMO VITTONE        TORINO      PIEMONTE  SETTIMO VITTONE        TORINO       
+# ℹ 781 more rows
+# ℹ Use `print(n = ...)` to see more rows
+Running: C:/Users/franc/OneDrive/Immagini/Documenti/Gustav_Line/war-and-institutional-change-gustav-line/scripts/09_select_gis_distance_gustav_data.R 
+Running: C:/Users/franc/OneDrive/Immagini/Documenti/Gustav_Line/war-and-institutional-change-gustav-line/scripts/10_merge_main_dataset.R 
+# A tibble: 1 × 4
+  master_n matched_fontana matched_gagliarducci matched_ref46
+     <int>           <int>                <int>         <int>
+1     8101               0                    0             0
+Running: C:/Users/franc/OneDrive/Immagini/Documenti/Gustav_Line/war-and-institutional-change-gustav-line/scripts/11_merge_dataset_maps.R 
+Running: C:/Users/franc/OneDrive/Immagini/Documenti/Gustav_Line/war-and-institutional-change-gustav-line/scripts/12_table_1_summary_stats.R 
+wrote 1.78kB in  0s, 77.59MB/s                                                                                                        wrote 2.15GB in  0s, 2.15GB/s                                                                                                        Running: C:/Users/franc/OneDrive/Immagini/Documenti/Gustav_Line/war-and-institutional-change-gustav-line/scripts/13_table_2_balance_checks.R 
+wrote 1.27kB in  0s, 55.62MB/s                                                                                                        wrote 2.15GB in  0s, 2.15GB/s                                                                                                        Running: C:/Users/franc/OneDrive/Immagini/Documenti/Gustav_Line/war-and-institutional-change-gustav-line/scripts/14_table_3_main_results.R 
+wrote 1.31kB in  0s, 48.59MB/s                                                                                                        wrote 2.15GB in  0s, 2.15GB/s                                                                                                        Running: C:/Users/franc/OneDrive/Immagini/Documenti/Gustav_Line/war-and-institutional-change-gustav-line/scripts/15_table_4_rdrobust_main_results.R 
+wrote 2.15GB in  0s, 2.15GB/s                                                                                                        Running: C:/Users/franc/OneDrive/Immagini/Documenti/Gustav_Line/war-and-institutional-change-gustav-line/scripts/16_table_5_rdrobust_datadriven.R 
+wrote 2.15GB in  0s, 2.15GB/s                                                                                                        Running: C:/Users/franc/OneDrive/Immagini/Documenti/Gustav_Line/war-and-institutional-change-gustav-line/scripts/17_table_6_rddensity_mccrary.R 
+
+Manipulation testing using local polynomial density estimation.
+
+Number of obs =       8101
+Model =               unrestricted
+Kernel =              triangular
+BW method =           estimated
+VCE method =          jackknife
+
+c = 0                 Left of c           Right of c          
+Number of obs         1968                6133                
+Eff. Number of obs    477                 462                 
+Order est. (p)        2                   2                   
+Order bias (q)        3                   3                   
+BW est. (h)           77.778              103.95              
+
+Method                T                   P > |T|             
+Robust                0.7613              0.4465              
+
+
+P-values of binomial tests (H0: p=0.5).
+
+Window Length / 2          <c     >=c    P>|T|
+7.336                      46      20    0.0019
+14.672                     81      48    0.0046
+22.008                    122      83    0.0078
+29.344                    161     121    0.0200
+36.680                    202     158    0.0233
+44.016                    256     188    0.0014
+51.352                    310     222    0.0002
+58.688                    351     251    0.0001
+66.024                    402     278    0.0000
+73.360                    447     304    0.0000
+wrote 2.15GB in  0s, 2.15GB/s                                                                                                        Running: C:/Users/franc/OneDrive/Immagini/Documenti/Gustav_Line/war-and-institutional-change-gustav-line/scripts/18_figure_1_map_italy_occupation.R 
+Running: C:/Users/franc/OneDrive/Immagini/Documenti/Gustav_Line/war-and-institutional-change-gustav-line/scripts/19_figure_2_map_within100km_republic.R 
+Running: C:/Users/franc/OneDrive/Immagini/Documenti/Gustav_Line/war-and-institutional-change-gustav-line/scripts/20_figure_3_rd_plot.R 
+Running: C:/Users/franc/OneDrive/Immagini/Documenti/Gustav_Line/war-and-institutional-change-gustav-line/scripts/21_figure_4_rdrobust_plot.R 
+Running: C:/Users/franc/OneDrive/Immagini/Documenti/Gustav_Line/war-and-institutional-change-gustav-line/scripts/22_figure_5_mccrary_plot.R 
+
+Replication completed successfully.
