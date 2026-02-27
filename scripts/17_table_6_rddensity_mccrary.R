@@ -30,7 +30,6 @@ out_csv <- here("results", "tables", "table6_rddensity_mccrary.csv")
 
 if (!dir.exists(results_dir)) dir.create(results_dir)
 if (!dir.exists(tables_dir)) dir.create(tables_dir, recursive = TRUE)
-if (!dir.exists(figures_dir)) dir.create(figures_dir, recursive = TRUE)
 
 # Load + build running variable (distance from Gustav Line in km)
 df <- readRDS(in_file)
