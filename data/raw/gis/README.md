@@ -484,42 +484,54 @@ municipalities_dist_centroids.gpkg
 This operation creates a new field:
 
 ```
-distance
+HubDist
 ```
 
-
-
-
-
-
-
+which stores the minimum Euclidean distance (in meters) between each municipality centroid and the extended Gustav Line.
 
 ---
 
-## Compute Distance to the Gustav Line
+## Construct Distance Variables
 
-Distances are defined as the minimum Euclidean distance between each municipality centroid and the Gustav Line LineString.
-
-In QGIS:
-
-**Processing → Join attributes by nearest**
-
-Input layer:
-- `comuni_2001_centroids`
-
-Input layer 2:
-- `gustav_line_true`
-
-Maximum nearest neighbors:
-- 1
-
-Export the resulting layer as:
+Open the attribute table of:
 
 ```
-comuni_2001_dist_gustav.gpkg
+municipalities_dist_centroids.gpkg
 ```
 
-Distances are expressed in meters.
+### 1. Rename the Distance Variable
+
+For clarity, rename the automatically generated field `HubDist` to:
+
+```
+distance
+```
+
+This variable represents the Euclidean distance from the Gustav Line (in meters).
+
+### 2. Construct the Signed Running Variable
+
+Open the **Field Calculator** and create a new field:
+
+- Name: `distance_gustav`
+- Type: Decimal number
+
+Use the following expression:
+
+```
+CASE
+WHEN "gustav" = 1 THEN "distance"
+ELSE - "distance"
+END
+```
+
+The resulting variable has the following interpretation:
+
+- Municipalities North of the Gustav Line: `distance_gustav > 0`
+- Municipalities South of the Gustav Line: `distance_gustav < 0`
+- Cutoff (Gustav Line): `distance_gustav = 0`
+
+This signed distance (in meters) is the running variable used in the geographic regression discontinuity design.
 
 ---
 
@@ -528,11 +540,11 @@ Distances are expressed in meters.
 The final dataset contains one observation per municipality, including:
 
 - Municipality identifier
-- 
-- Distance to the Gustav Line (in meters)
+- `gustav` — Binary indicator equal to 1 if the municipality lies north of the Gustav Line and 0 if it lies south
+- `distance` — Euclidean distance to the Gustav Line (in meters)  
+- `distance_gustav` — Signed distance to the Gustav Line (in meters)  
 
-This distance variable is converted in .rds file into R using:
-
+The dataset is imported into R using:
 ```
 03_import_gis_distance_gustav.R
 ```
