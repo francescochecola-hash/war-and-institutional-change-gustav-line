@@ -549,8 +549,6 @@ The dataset is imported into R using:
 03_import_gis_distance_gustav.R
 ```
 
-It serves as the running variable in the geographic RD design.
-
 Distances are converted to kilometers within the R scripts.
 
 ---
