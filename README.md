@@ -17,12 +17,11 @@ All empirical results in the thesis can be reproduced using the provided code, c
 
 ---
 
-# Replication Instructions
-
 ## Software Requirements
 
 - R version 4.2 or higher  
-- RStudio (recommended)
+- RStudio (recommended)  
+- QGIS version 3.34 or higher  
 
 All required R packages are automatically installed by the replication script if missing.
 
