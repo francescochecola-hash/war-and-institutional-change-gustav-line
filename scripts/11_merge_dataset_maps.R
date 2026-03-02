@@ -62,9 +62,7 @@ pick_col <- function(df, candidates) {
   hit[1]
 }
 
-# ------------------------------------------------------------------------------
-# 1) Master boundaries (sf)
-# ------------------------------------------------------------------------------
+# Master 2001 municipalities' boundaries
 comuni <- readRDS(master_file)
 if (!inherits(comuni, "sf")) stop("comuni_2001_boundaries.rds is not an sf object.")
 
@@ -76,7 +74,7 @@ if (!all(gtypes %in% c("POLYGON", "MULTIPOLYGON"))) {
 epsg <- st_crs(comuni)$epsg
 if (is.na(epsg) || epsg != 32632) stop("Master CRS is not EPSG:32632. Found EPSG: ", epsg)
 
-# master id column (your screenshot shows PRO_COM)
+# Master through the variable of istat municipality identifier
 master_id_col <- pick_col(comuni, c("pro_com", "PRO_COM", "Pro_Com", "PROCOM", "procom"))
 if (is.na(master_id_col)) {
   stop("Master is missing municipality id column. Tried: pro_com / PRO_COM / Pro_Com / PROCOM / procom")
@@ -87,9 +85,7 @@ comuni <- comuni %>%
 
 assert_no_duplicates(comuni, "cod_istat103", "comuni_2001_boundaries.rds")
 
-# ------------------------------------------------------------------------------
-# 2) GIS distance (attach second)
-# ------------------------------------------------------------------------------
+# GIS distance
 gis <- readRDS(gis_file)
 
 gis_id_col <- pick_col(gis, c("pro_com", "PRO_COM", "Pro_Com", "PROCOM", "procom"))
@@ -105,9 +101,7 @@ gis <- gis %>%
 
 assert_no_duplicates(gis, "cod_istat103", "gis_gustav_distance_selected.rds")
 
-# ------------------------------------------------------------------------------
-# 3) Fontana + Ref46
-# ------------------------------------------------------------------------------
+# Fontana et al. dataset and Referendum 1946 dataset
 fontana <- readRDS(fontana_file)
 if (!("cod_istat103" %in% names(fontana))) stop("Fontana selected missing cod_istat103.")
 if (!("occupation" %in% names(fontana))) stop("Fontana selected missing occupation.")
@@ -128,17 +122,13 @@ ref46 <- ref46 %>%
 
 assert_no_duplicates(ref46, "cod_istat103", "referendum_1946_selected.rds")
 
-# ------------------------------------------------------------------------------
-# 4) Merge (left joins on master)
-# ------------------------------------------------------------------------------
+# Merge
 merged <- comuni %>%
   left_join(gis,     by = "cod_istat103") %>%
   left_join(fontana, by = "cod_istat103") %>%
   left_join(ref46,   by = "cod_istat103")
 
-# ------------------------------------------------------------------------------
-# 4b) Manual correction: occupation for cod_istat103 == 58122
-# ------------------------------------------------------------------------------
+# Manual correction: occupation for cod_istat103 == 58122
 merged <- merged %>%
   mutate(
     occupation = if_else(
@@ -148,16 +138,13 @@ merged <- merged %>%
     )
   )
 
-# ------------------------------------------------------------------------------
-# 5) Keep only requested columns + geometry
-# ------------------------------------------------------------------------------
+# Keep only requested columns and keep geometry
 geom_col <- attr(merged, "sf_column")
 
-# name column in master (your screenshot shows COMUNE)
 name_col <- pick_col(merged, c("name", "NAME", "comune", "COMUNE"))
 if (is.na(name_col)) stop("Could not find municipality name column (tried name/COMUNE/comune).")
 
-# keep code columns in the exact case they exist
+# Keep code columns in the exact case they exist
 keep_cols <- c(
   pick_col(merged, c("cod_rip", "COD_RIP")),
   pick_col(merged, c("cod_reg", "COD_REG")),
@@ -182,8 +169,6 @@ merged <- merged %>%
   rename(geom = all_of(geom_col)) %>%
   st_as_sf(sf_column_name = "geom")
 
-# ------------------------------------------------------------------------------
-# 6) Save
-# ------------------------------------------------------------------------------
+# Save
 saveRDS(merged, out_rds)
 message("Saved: ", out_rds)
