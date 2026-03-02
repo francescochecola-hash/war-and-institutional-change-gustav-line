@@ -134,7 +134,7 @@ The `scripts/` folder contains all R scripts necessary to reproduce:
 - Dataset merging  
 - GeoRDD analysis  
 - RDRobust estimation  
-- Density tests  
+- McCrary Density tests  
 - Tables  
 - Figures  
 
