@@ -34,7 +34,22 @@ if (!dir.exists(tables_dir)) dir.create(tables_dir, recursive = TRUE)
 # Load + build running variable (distance from Gustav Line in km)
 df <- readRDS(in_file)
 
-req_vars <- c("distance_gustav_km", "gustav")
+# Exclude specific municipalities by ISTAT code
+exclude_ids <- c(
+  63049, 59033, 59018, 63037, 63007, 63014, 63004,
+  71026, 63019, 63078, 63047, 63061, 63031, 63038,
+  82075, 81020, 81009, 81014, 81024, 81011, 81021,
+  81013, 81008, 81022, 81002, 81005, 81007
+)
+
+if (!"cod_istat103" %in% names(df)) {
+  stop("Variable 'cod_istat103' not found in dataset.")
+}
+
+df <- df %>%
+  filter(!(cod_istat103 %in% exclude_ids))
+
+req_vars <- c("distance_gustav_km", "gustav", "cod_istat103")
 missing_req <- setdiff(req_vars, names(df))
 if (length(missing_req) > 0) {
   stop("Missing required variables:\n- ", paste(missing_req, collapse = "\n- "))
@@ -93,7 +108,7 @@ if (!is.finite(p_val)) {
 
 # Save CSV
 out <- tibble::tibble(
-  test = "rddensity (McCrary-style)",
+  test = "rddensity (McCrary)",
   cutoff = 0,
   N = length(df$x),
   N_left = sum(df$x < 0),
