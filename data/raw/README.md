@@ -41,6 +41,7 @@ Replication data:
 
 Expected file:
 - `data_final_wow.dta`
+- `gustavcoord_december.dta`
 
 ---
 
@@ -65,11 +66,12 @@ Expected file:
 
 This project also relies on geographic data processed in QGIS, including:
 - municipality boundaries as of 2001,
+- Gustav Line,
 - centroids of municipalities,
-- distances from each municipality to the nearest municipality located along
+- signed distances from each municipality to the nearest municipality located along
   the Gustav Line.
 
-**Source:**
+**Source for municipality boundaries:**
 - Italian National Institute of Statistics (ISTAT)  
   https://www.istat.it/notizia/confini-delle-unita-amministrative-a-fini-statistici-al-1-gennaio-2018-2/
 
