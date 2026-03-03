@@ -2,7 +2,7 @@
 # Francesco Checola
 # War and Institutional Change: The Case of Gustav Line
 #
-# Script: 12_results_table_1_summary_stats.R
+# Script: 12_table_1_summary_stats.R
 # Purpose:
 #   Compute summary statistics for Italy and for municipalities within 100 km of the Gustav Line.
 #   Export a dataset (with n. of obs., mean, sd, min, max) for replication.
@@ -107,7 +107,7 @@ df <- df %>%
 summ_one <- function(data, var) {
   x <- data[[var]]
   tibble(
-    Observations = sum(!is.na(x)),
+    Obs = sum(!is.na(x)),
     Mean         = mean(x, na.rm = TRUE),
     SD           = sd(x, na.rm = TRUE),
     Min          = suppressWarnings(min(x, na.rm = TRUE)),
@@ -128,8 +128,28 @@ make_panel <- function(data, group_name) {
 }
 
 # Compute panels
+# Exclude IDs only for the 100km sample
+exclude_ids <- c(
+  63049, 59033, 59018, 63037, 63007, 63014, 63004,
+  71026, 63019, 63078, 63047, 63061, 63031, 63038,
+  82075, 81020, 81009, 81014, 81024, 81011, 81021,
+  81013, 81008, 81022, 81002, 81005, 81007
+)
+
+if (!"cod_istat103" %in% names(df)) {
+  stop("Variable 'cod_istat103' not found in dataset.")
+}
+
+# Italy: full sample
 tab_italy <- make_panel(df, "Italy")
-tab_100km <- make_panel(df %>% filter(within_100km), "Within 100 km from Gustav Line")
+
+# 100 km sample: apply exclusion
+tab_100km <- make_panel(
+  df %>%
+    filter(within_100km) %>%
+    filter(!(cod_istat103 %in% exclude_ids)),
+  "Within_100km"
+)
 
 tab_long <- bind_rows(tab_italy, tab_100km)
 
@@ -145,7 +165,7 @@ tab_wide <- tab_long %>%
   pivot_wider(
     id_cols = c(panel, variable, variable_raw),
     names_from = group,
-    values_from = c(Observations, Mean, SD, Min, Max),
+    values_from = c(Obs, Mean, SD, Min, Max),
     names_glue = "{group}_{.value}"
   ) %>%
   mutate(
@@ -153,9 +173,9 @@ tab_wide <- tab_long %>%
     variable_raw = factor(variable_raw, levels = table_spec$var)
   ) %>%
   arrange(panel, variable_raw) %>%
-  select(panel, variable, starts_with("Italy_"), starts_with("Within 100 km from Gustav Line_")) %>%
+  select(panel, variable, starts_with("Italy_"), starts_with("Within_100km_")) %>%
   mutate(
-    across(contains("Observations"), as.integer),
+    across(contains("Obs"), as.integer),
     across(contains("Mean"), ~ round(.x, 3)),
     across(contains("SD"),   ~ round(.x, 3)),
     across(contains("Min"),  ~ round(.x, 3)),
