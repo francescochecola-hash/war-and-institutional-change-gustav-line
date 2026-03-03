@@ -40,6 +40,27 @@ dir_create(tables_dir)
 # Load data
 df <- readRDS(in_file)
 
+# Exclude specific municipalities by ISTAT code
+exclude_ids <- c(
+  63049, 59033, 59018, 63037, 63007, 63014, 63004,
+  71026, 63019, 63078, 63047, 63061, 63031, 63038,
+  82075, 81020, 81009, 81014, 81024, 81011, 81021,
+  81013, 81008, 81022, 81002, 81005, 81007
+)
+
+if (!"cod_istat103" %in% names(df)) {
+  stop("Variable 'cod_istat103' not found in dataset.")
+}
+
+n_before <- nrow(df)
+
+df <- df %>%
+  filter(!(cod_istat103 %in% exclude_ids))
+
+n_after <- nrow(df)
+
+message("Excluded ", n_before - n_after, " municipalities based on cod_istat103.")
+
 # Stars helper based on |t| thresholds:
 # *   if |t| >= 1.64
 # **  if |t| >= 1.96
