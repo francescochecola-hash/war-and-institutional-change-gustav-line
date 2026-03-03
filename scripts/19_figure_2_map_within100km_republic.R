@@ -96,7 +96,7 @@ p <- ggplot() +
   scale_fill_gradient(
     low  = "#deebf7",
     high = "#08519c",
-    name = "Republic (%)",
+    name = "Vote for Republic (%)",
     labels = label_number(accuracy = 1)
   ) +
   
@@ -131,7 +131,7 @@ p <- ggplot() +
       order = 1,
       override.aes = list(linetype = 1, linewidth = 1.1)
     ),
-    fill = guide_legend(order = 3) # this applies to the Excluded scale (second fill)
+    fill = guide_legend(order = 3)
   ) +
   
   theme_void() +
