@@ -5,8 +5,8 @@
 # Script: 19_figure_2_map_within100km_republic.R
 # Purpose:
 #   Map municipalities within [-100, 100] km from Gustav line,
-#   colored by perc_republic (blue gradient), with Gustav line overlay,
-#   and NA perc_republic shown as "Excluded" in black with its own legend key.
+#   colored by percentage of vote for Republic, with Gustav line overlay,
+#   and "Excluded" municipalities in black.
 #
 # Inputs:
 #   data/processed/merge/comuni_2001_boundaries_merged.rds
@@ -16,22 +16,21 @@
 #   results/figures/figure2_map_within100km_republic.png
 #
 # Notes:
-#   - Filter: distance_gustav_km in [-100, 100] inclusive
+#   - Filter: distance_gustav_km in [-100, 100]
 #   - Exclude specific municipalities by cod_istat103
-#   - Color: perc_republic (light -> dark blue, continuous)
-#   - NA perc_republic -> "Excluded" (black) shown as separate legend item
-#   - No municipal borders
+#   - Color: vote for Republic (light -> dark blue, continuous)
+#   - "Excluded" (black) municipalities when Referendum 1946 = NA
 #   - Gustav line in black with legend key (line)
-#   - CRS: enforce EPSG:32632 for both layers
+#   - CRS: enforce EPSG:32632 for layers
 # ==============================================================================
 
 suppressPackageStartupMessages({
-  library(dplyr)
-  library(sf)
-  library(ggplot2)
-  library(here)
-  library(scales)
-  library(ggnewscale)  # <- needed for 2 fill scales
+  library(dplyr)       # data manipulation and variable construction
+  library(sf)          # handling and import of spatial vector data (GeoPackage)
+  library(ggplot2)     # plotting and graphical output
+  library(here)        # robust file paths relative to project root
+  library(scales)      # 
+  library(ggnewscale)  # needed for 2 fill scales
 })
 
 # Paths
