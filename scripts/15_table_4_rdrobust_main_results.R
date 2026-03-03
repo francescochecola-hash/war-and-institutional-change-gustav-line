@@ -22,7 +22,7 @@ suppressPackageStartupMessages({
   library(dplyr)     # data manipulation
   library(readr)     # csv export
   library(rdrobust)  # RD estimation using the Calonico-Cattaneo-Titiunik framework 
-                     # (local polynomial RD with robust bias-corrected inference)
+  # (local polynomial RD with robust bias-corrected inference)
   library(here)      # robust paths for replication
 })
 
@@ -36,10 +36,22 @@ out_csv     <- here("results", "tables", "table4_rdrobust_main_results.csv")
 if (!dir.exists(results_dir)) dir.create(results_dir)
 if (!dir.exists(tables_dir)) dir.create(tables_dir, recursive = TRUE)
 
-# Load data + variables used
-df <- readRDS(in_file)
+# Exclude specific municipalities by ISTAT code
+exclude_ids <- c(
+  63049, 59033, 59018, 63037, 63007, 63014, 63004,
+  71026, 63019, 63078, 63047, 63061, 63031, 63038,
+  82075, 81020, 81009, 81014, 81024, 81011, 81021,
+  81013, 81008, 81022, 81002, 81005, 81007
+)
 
-req_vars <- c("distance_gustav_km", "gustav")
+if (!"cod_istat103" %in% names(df)) {
+  stop("Variable 'cod_istat103' not found in dataset.")
+}
+
+df <- df %>%
+  filter(!(cod_istat103 %in% exclude_ids))
+
+req_vars <- c("distance_gustav_km", "gustav", "gagliarducci_longitude", "gagliarducci_latitude")
 missing_req <- setdiff(req_vars, names(df))
 if (length(missing_req) > 0) {
   stop("Missing required variables:\n- ", paste(missing_req, collapse = "\n- "))
@@ -72,7 +84,7 @@ df <- df %>%
   filter(!is.na(distance_gustav_km), distance_gustav_km != 0) %>%  # exclude dist==0
   filter(!is.na(gustav)) %>%
   mutate(
-    x = ifelse(gustav == 1L, abs(distance_gustav_km), -abs(distance_gustav_km)),
+    x = distance_gustav_km,          
     y = .data[[outcome_var]]
   ) %>%
   filter(!is.na(x), !is.na(y))
