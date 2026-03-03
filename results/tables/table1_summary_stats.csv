@@ -1,4 +1,4 @@
-panel,variable,Italy_Observations,Italy_Mean,Italy_SD,Italy_Min,Italy_Max,Within_100km_Observations,Within_100km_Mean,Within_100km_SD,Within_100km_Min,Within_100km_Max
+panel,variable,Italy_Obs,Italy_Mean,Italy_SD,Italy_Min,Italy_Max,Within_100km_Obs,Within_100km_Mean,Within_100km_SD,Within_100km_Min,Within_100km_Max
 Geographic Factors,Elevation of the City Hall,7996,3.526,2.907,0,20.35,1059,4.297,2.981,0.02,14.33
 Geographic Factors,Max. elevation of the Municipality,5698,789.374,796.054,2,4554,512,783.586,568.037,9,2912
 Demographic and Economic Factors,Population (1921),5490,4796.447,21950.713,84,775203,488,4103.004,5226.489,354,39634
