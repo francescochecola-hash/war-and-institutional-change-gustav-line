@@ -35,7 +35,26 @@ if (!dir.exists(tables_dir)) dir.create(tables_dir, recursive = TRUE)
 # Load data + required vars
 df <- readRDS(in_file)
 
-req_vars <- c("distance_gustav_km", "gustav")
+# Exclude specific municipalities by ISTAT code
+exclude_ids <- c(
+  63049, 59033, 59018, 63037, 63007, 63014, 63004,
+  71026, 63019, 63078, 63047, 63061, 63031, 63038,
+  82075, 81020, 81009, 81014, 81024, 81011, 81021,
+  81013, 81008, 81022, 81002, 81005, 81007
+)
+
+if (!"cod_istat103" %in% names(df)) {
+  stop("Variable 'cod_istat103' not found in dataset.")
+}
+
+df <- df %>%
+  filter(!(cod_istat103 %in% exclude_ids))
+
+req_vars <- c(
+  "distance_gustav_km", "gustav",
+  "cod_istat103",
+  "gagliarducci_longitude", "gagliarducci_latitude"
+)
 missing_req <- setdiff(req_vars, names(df))
 if (length(missing_req) > 0) {
   stop("Missing required variables:\n- ", paste(missing_req, collapse = "\n- "))
@@ -93,7 +112,6 @@ prewar_controls <- c(
   "gagliarducci_p_voti2_socialisti1919",
   "gagliarducci_p_voti2_cattolici1919",
   "gagliarducci_p_voti2_liberali1919",
-  "gagliarducci_p_voti2_fascisti1919",
   "gagliarducci_p_voti2_socialisti1921",
   "gagliarducci_p_voti2_comunisti1921",
   "gagliarducci_p_voti2_cattolici1921",
@@ -118,8 +136,10 @@ share_like <- unique(c(
 share_like <- intersect(share_like, names(df))
 
 for (v in share_like) {
-  mxv <- suppressWarnings(max(df[[v]], na.rm = TRUE))
-  if (is.finite(mxv) && mxv <= 1.5) df[[v]] <- df[[v]] * 100
+  if (is.numeric(df[[v]])) {
+    mxv <- suppressWarnings(max(df[[v]], na.rm = TRUE))
+    if (is.finite(mxv) && mxv <= 1.5) df[[v]] <- df[[v]] * 100
+  }
 }
 
 # log pop 1951
