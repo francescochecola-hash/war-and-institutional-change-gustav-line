@@ -34,27 +34,21 @@ suppressPackageStartupMessages({
   library(ggnewscale)  # <- needed for 2 fill scales
 })
 
-# ------------------------------------------------------------------------------
 # Paths
-# ------------------------------------------------------------------------------
 in_comuni <- here("data", "processed", "merge", "comuni_2001_boundaries_merged.rds")
 in_line   <- here("data", "processed", "import", "gustav_line.rds")
 
 out_png <- here("results", "figures", "figure2_map_within100km_republic.png")
 dir.create(dirname(out_png), recursive = TRUE, showWarnings = FALSE)
 
-# ------------------------------------------------------------------------------
 # Load data
-# ------------------------------------------------------------------------------
 comuni <- readRDS(in_comuni)
 gline  <- readRDS(in_line)
 
 if (!inherits(comuni, "sf")) stop("comuni_2001_boundaries_merged.rds is not an sf object.")
 if (!inherits(gline,  "sf")) stop("gustav_line.rds is not an sf object.")
 
-# ------------------------------------------------------------------------------
 # CRS: enforce EPSG:32632 for both layers
-# ------------------------------------------------------------------------------
 target_epsg <- 32632
 if (is.na(st_crs(comuni)$epsg)) stop("comuni has missing CRS.")
 if (is.na(st_crs(gline)$epsg))  stop("gustav_line has missing CRS.")
@@ -62,9 +56,7 @@ if (is.na(st_crs(gline)$epsg))  stop("gustav_line has missing CRS.")
 if (st_crs(comuni)$epsg != target_epsg) comuni <- st_transform(comuni, target_epsg)
 if (st_crs(gline)$epsg  != target_epsg) gline  <- st_transform(gline,  target_epsg)
 
-# ------------------------------------------------------------------------------
-# Filter within [-100, 100] km + exclude specific cod_istat103
-# ------------------------------------------------------------------------------
+# Filter within [-100, 100] km and exclude specific cod_istat103
 need_vars <- c("distance_gustav_km", "perc_republic", "cod_istat103")
 miss <- setdiff(need_vars, names(comuni))
 if (length(miss) > 0) stop("Missing variables in comuni: ", paste(miss, collapse = ", "))
@@ -92,9 +84,7 @@ comuni_ok  <- comuni_filt %>% filter(!is.na(perc_republic))
 comuni_na  <- comuni_filt %>% filter(is.na(perc_republic)) %>%
   mutate(excluded = "Excluded")  # dummy categorical for legend
 
-# ------------------------------------------------------------------------------
 # Plot
-# ------------------------------------------------------------------------------
 p <- ggplot() +
   # 1) Non-NA: continuous blue gradient
   geom_sf(
@@ -151,5 +141,6 @@ p <- ggplot() +
     legend.text  = element_text(size = 10)
   )
 
+#Save png file
 ggsave(out_png, plot = p, width = 8, height = 8, dpi = 300)
 message("Saved: ", out_png)
