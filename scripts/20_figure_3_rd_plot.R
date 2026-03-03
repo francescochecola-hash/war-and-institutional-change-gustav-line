@@ -168,7 +168,7 @@ p <- ggplot() +
   ) +
   theme_minimal(base_size = 12)
 
-# Save
+# Save png format
 ggsave(
   filename = out_png,
   plot = p,
