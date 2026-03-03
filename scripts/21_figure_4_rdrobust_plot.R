@@ -58,7 +58,7 @@ df <- df %>%
   filter(!is.na(distance_gustav_km), distance_gustav_km != 0) %>%  # exclude exactly-on-the-line
   filter(!is.na(gustav)) %>%
   mutate(
-    x = distance_gustav_km,          # already signed (North +, South -)
+    x = distance_gustav_km,       
     y = .data[[outcome_var]]
   ) %>%
   filter(!is.na(x), !is.na(y))
@@ -86,7 +86,7 @@ rdplot(
   c = 0,
   x.lim = c(-75, 75),
   x.label = "Distance from Gustav Line (km)",
-  y.label = "Demand for Institutional Change (%)"
+  y.label = "Vote for Republic (%)"
 )
 
 dev.off()
