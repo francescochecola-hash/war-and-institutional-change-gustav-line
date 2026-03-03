@@ -1,2 +1,2 @@
 test,cutoff,N,N_left,N_right,p_value_robust
-rddensity (McCrary-style),0,8074,1942,6132,0.5439
+rddensity (McCrary),0,8074,1942,6132,0.5439
