@@ -34,6 +34,21 @@ if (!dir.exists(figures_dir)) dir.create(figures_dir, recursive = TRUE)
 # Load data + required vars
 df <- readRDS(in_file)
 
+# Exclude specific municipalities by ISTAT code
+exclude_ids <- c(
+  63049, 59033, 59018, 63037, 63007, 63014, 63004,
+  71026, 63019, 63078, 63047, 63061, 63031, 63038,
+  82075, 81020, 81009, 81014, 81024, 81011, 81021,
+  81013, 81008, 81022, 81002, 81005, 81007
+)
+
+if (!"cod_istat103" %in% names(df)) {
+  stop("Variable 'cod_istat103' not found in dataset.")
+}
+
+df <- df %>%
+  filter(!(cod_istat103 %in% exclude_ids))
+
 req_vars <- c("distance_gustav_km", "gustav", "gagliarducci_longitude", "gagliarducci_latitude")
 missing_req <- setdiff(req_vars, names(df))
 if (length(missing_req) > 0) {
@@ -77,7 +92,7 @@ if (is.numeric(df[[outcome_var]])) {
 }
 
 # Figure settings
-x_lim <- 75          # show [-75, 75]
+x_lim <- 100          # show [-100, 100]
 bin_w <- 3           # bin width in km
 poly_degree <- 2     # fitted curve degree
 
@@ -149,7 +164,7 @@ p <- ggplot() +
   coord_cartesian(xlim = c(-x_lim, x_lim)) +
   labs(
     x = "Distance from Gustav Line (km)",
-    y = "Demand for Institutional Change (%)"
+    y = "Vote for Republic (%)"
   ) +
   theme_minimal(base_size = 12)
 
