@@ -53,7 +53,12 @@ n_before <- nrow(df)
 df <- df %>% filter(!(cod_istat103 %in% exclude_ids))
 message("Excluded ", n_before - nrow(df), " municipalities based on cod_istat103.")
 
-req_vars <- c("distance_gustav_km", "gustav", "gagliarducci_longitude", "gagliarducci_latitude")
+req_vars <- c(
+  "distance_gustav_km", "gustav",
+  "gagliarducci_longitude", "gagliarducci_latitude",
+  "longitude2", "latitude2", "long_lat",
+  "gustav_euclidean_dist", "gustav_euclidean_dist2"
+)
 missing_req <- setdiff(req_vars, names(df))
 if (length(missing_req) > 0) {
   stop("Missing required variables:\n- ", paste(missing_req, collapse = "\n- "))
@@ -74,12 +79,11 @@ outcome_var <- cands[1]
 message("Using outcome variable: ", outcome_var)
 
 # Sample restrictions + running var
-# - Use signed distance from GIS: distance_gustav_km
+# - Use signed distance (distance_gustav_km) for RD bandwidth
 # - Exclude exactly-on-the-line observations (distance == 0)
 df <- df %>%
   filter(!is.na(distance_gustav_km)) %>%
-  filter(distance_gustav_km != 0) %>%
-  mutate(signed_dist_km = distance_gustav_km)
+  filter(distance_gustav_km != 0)
 
 # Scale outcome to percentage points if in [0,1]
 if (is.numeric(df[[outcome_var]])) {
@@ -234,15 +238,15 @@ empty_cols <- setNames(rep("", length(cols)), cols)
 
 # Table 3 specifications
 A_linear_rhs <- c("gustav", "gagliarducci_longitude", "gagliarducci_latitude")
-A_quad_rhs   <- c(
+A_quad_rhs <- c(
   "gustav",
   "gagliarducci_longitude", "gagliarducci_latitude",
-  "I(gagliarducci_longitude^2)", "I(gagliarducci_latitude^2)",
-  "I(gagliarducci_longitude*gagliarducci_latitude)"
+  "longitude2", "latitude2",
+  "long_lat"
 )
 
-B_linear_rhs <- c("gustav", "signed_dist_km")
-B_quad_rhs   <- c("gustav", "signed_dist_km", "I(signed_dist_km^2)")
+B_linear_rhs <- c("gustav", "gustav_euclidean_dist")
+B_quad_rhs   <- c("gustav", "gustav_euclidean_dist", "gustav_euclidean_dist2")
 
 OLS_rhs <- c("gustav")
 
