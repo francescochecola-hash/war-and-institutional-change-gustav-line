@@ -37,6 +37,22 @@ if (!dir.exists(tables_dir)) dir.create(tables_dir, recursive = TRUE)
 # Load data + required vars
 df <- readRDS(in_file)
 
+# Exclude specific municipalities by ISTAT code
+exclude_ids <- c(
+  63049, 59033, 59018, 63037, 63007, 63014, 63004,
+  71026, 63019, 63078, 63047, 63061, 63031, 63038,
+  82075, 81020, 81009, 81014, 81024, 81011, 81021,
+  81013, 81008, 81022, 81002, 81005, 81007
+)
+
+if (!"cod_istat103" %in% names(df)) {
+  stop("Variable 'cod_istat103' not found in dataset.")
+}
+
+n_before <- nrow(df)
+df <- df %>% filter(!(cod_istat103 %in% exclude_ids))
+message("Excluded ", n_before - nrow(df), " municipalities based on cod_istat103.")
+
 req_vars <- c("distance_gustav_km", "gustav", "gagliarducci_longitude", "gagliarducci_latitude")
 missing_req <- setdiff(req_vars, names(df))
 if (length(missing_req) > 0) {
@@ -86,7 +102,6 @@ prewar_controls <- c(
   "gagliarducci_p_voti2_socialisti1919",
   "gagliarducci_p_voti2_cattolici1919",
   "gagliarducci_p_voti2_liberali1919",
-  "gagliarducci_p_voti2_fascisti1919",
   "gagliarducci_p_voti2_socialisti1921",
   "gagliarducci_p_voti2_comunisti1921",
   "gagliarducci_p_voti2_cattolici1921",
@@ -155,26 +170,44 @@ fit_extract <- function(data, fml, coef_name = "gustav") {
   vc <- sandwich::vcovHC(m, type = "HC1")
   ct <- lmtest::coeftest(m, vcov. = vc)
   
-  beta  <- as.numeric(ct[coef_name, "Estimate"])
+  beta   <- as.numeric(ct[coef_name, "Estimate"])
   se_rob <- as.numeric(ct[coef_name, "Std. Error"])
   se_con <- conley_se(fml, data, coef_name = coef_name)
+  
+  stars_rob <- star_from_t(beta / se_rob)
+  stars_con <- if (is.na(se_con)) "" else star_from_t(beta / se_con)
   
   list(
     n        = nobs(m),
     beta     = beta,
     se_rob   = se_rob,
     se_con   = se_con,
-    stars    = star_from_t(beta / se_rob),  # stars based on robust t-stat
+    stars_rob = stars_rob,
+    stars_con = stars_con,
     adjr2    = summary(m)$adj.r.squared
   )
 }
 
-fmt_cell <- function(beta, se_rob, se_con, stars, digits = 3) {
+fmt_cell <- function(beta, se_rob, se_con,
+                     stars_rob = "", stars_con = "",
+                     digits = 3) {
+  
   if (is.na(beta) || is.na(se_rob)) return("")
-  beta_s <- paste0(formatC(beta, format = "f", digits = digits), stars)
-  rob_s  <- paste0("(", formatC(se_rob, format = "f", digits = digits), ")")
-  con_s  <- if (is.na(se_con)) "" else paste0("[", formatC(se_con, format = "f", digits = digits), "]")
-  paste(beta_s, rob_s, con_s, sep = "\n")
+  
+  # 1) coefficient
+  line1 <- formatC(beta, format = "f", digits = digits)
+  
+  # 2) robust SE
+  line2 <- paste0("(", formatC(se_rob, format = "f", digits = digits), ")", stars_rob)
+  
+  # 3) conley SE
+  line3 <- if (is.na(se_con)) {
+    ""
+  } else {
+    paste0("[", formatC(se_con, format = "f", digits = digits), "]", stars_con)
+  }
+  
+  paste(line1, line2, line3, sep = "\n")
 }
 
 fmt_num <- function(x, digits = 3) {
@@ -233,7 +266,13 @@ estimate_for_col <- function(rhs_base, bw, controls_on) {
   est <- fit_extract(d, fml, coef_name = "gustav")
   
   list(
-    cell  = fmt_cell(est$beta, est$se_rob, est$se_con, est$stars),
+    cell = fmt_cell(
+      est$beta,
+      est$se_rob,
+      est$se_con,
+      stars_rob = est$stars_rob,
+      stars_con = est$stars_con
+    ),
     adjr2 = fmt_num(est$adjr2),
     n     = as.character(est$n),
     geo   = geo_flag,
@@ -279,7 +318,7 @@ obs_vals    <- extract_field(OLS_b, "n")
 
 # Assemble final wide table
 table_out <- dplyr::bind_rows(
-  make_row("Dependent variable: Republic vote share in 1946", empty_cols),
+  make_row("Dependent variable: % Republic vote in 1946", empty_cols),
   make_row("", empty_cols),
   
   make_row("PANEL A. Polynomial in Longitude and Latitude", empty_cols),
