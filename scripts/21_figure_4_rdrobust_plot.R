@@ -2,7 +2,7 @@
 # Francesco Checola
 # War and Institutional Change: The Case of Gustav Line
 #
-# Script: 22_figure_4_rdrobust_plot.R
+# Script: 21_figure_4_rdrobust_plot.R
 # Purpose:
 #   Create the official rdrobust plot for the outcome vs distance
 #   to the Gustav Line (cutoff at 0).
@@ -32,6 +32,21 @@ if (!dir.exists(figures_dir)) dir.create(figures_dir, recursive = TRUE)
 
 # Load data
 df <- readRDS(in_file)
+
+# Exclude specific municipalities by ISTAT code
+exclude_ids <- c(
+  63049, 59033, 59018, 63037, 63007, 63014, 63004,
+  71026, 63019, 63078, 63047, 63061, 63031, 63038,
+  82075, 81020, 81009, 81014, 81024, 81011, 81021,
+  81013, 81008, 81022, 81002, 81005, 81007
+)
+
+if (!"cod_istat103" %in% names(df)) {
+  stop("Variable 'cod_istat103' not found in dataset.")
+}
+
+df <- df %>%
+  filter(!(cod_istat103 %in% exclude_ids))
 
 # Outcome (auto-detect: 1946 Republic vote share)
 nm <- names(df)
@@ -84,9 +99,10 @@ rdplot(
   y = df$y,
   x = df$x,
   c = 0,
-  x.lim = c(-75, 75),
+  x.lim = c(-100, 100),
   x.label = "Distance from Gustav Line (km)",
-  y.label = "Vote for Republic (%)"
+  y.label = "Vote for Republic (%)",
+  title = ""
 )
 
 dev.off()
