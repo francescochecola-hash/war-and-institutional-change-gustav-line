@@ -4,9 +4,9 @@
 #
 # Script: 14_table_3_main_results.R
 # Purpose:
-#   Replicate Table 3 (Main Results) in the same layout as in the slide:
+#   Replicate Table 3 (Main Results):
 #   columns (1)-(6) for <100/<75/<50 km (no controls) and <100/<75/<50 km (with controls),
-#   for Panel A (poly in longitude/latitude), Panel B (poly in signed distance), and OLS.
+#   for Panel A (poly in longitude/latitude), Panel B (poly in euclidean distance), and OLS.
 #
 # Inputs:  data/processed/merge/gustav_line_dataset.rds
 # Output:  results/tables/table3_main_results.csv
