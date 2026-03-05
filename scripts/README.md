@@ -48,7 +48,7 @@ The script reads the data from `data/raw/`, standardizes variable names, and sav
 
 Imports the GIS dataset containing municipality-level distance to the Gustav Line from a GeoPackage file (`.gpkg`).
 The script removes spatial geometry, standardizes variable names, constructs distance measures used in the analysis, 
-and and converts it into an R object (`.rds`) in the processed dataset in `data/processed/import/`.
+and converts it into an R object (`.rds`) in the processed dataset in `data/processed/import/`.
 
 ### 04_import_comuni_2001_boundaries.R
 
@@ -132,7 +132,7 @@ results to `results/tables/table6_rddensity_mccrary.csv`.
 ### 18_figure_map_italy_occupation.R
 
 Creates a municipality-level map of Italy colored by the length of occupation and overlays the Gustav Line.  
-The script loads the merged municipality boundaries and line geometry of Gustav Line, [standardizes CRS, bins occupation into categories], 
+The script loads the merged municipality boundaries and line geometry of the Gustav Line, [standardizes CRS, bins occupation into categories], 
 and saves the figure to `results/figures/figure1_map_italy_occupation.png`.
 
 ### 19_figure_2_map_within100km_republic.R
