@@ -32,7 +32,21 @@ if (!dir.exists(figures_dir)) dir.create(figures_dir, recursive = TRUE)
 # Load data
 df <- readRDS(in_file)
 
-req_vars <- c("distance_gustav_km", "gustav")
+exclude_ids <- c(
+  63049, 59033, 59018, 63037, 63007, 63014, 63004,
+  71026, 63019, 63078, 63047, 63061, 63031, 63038,
+  82075, 81020, 81009, 81014, 81024, 81011, 81021,
+  81013, 81008, 81022, 81002, 81005, 81007
+)
+
+if (!"cod_istat103" %in% names(df)) {
+  stop("Variable 'cod_istat103' not found in dataset.")
+}
+
+df <- df %>%
+  filter(!(cod_istat103 %in% exclude_ids))
+
+req_vars <- c("distance_gustav_km", "cod_istat103")
 missing_req <- setdiff(req_vars, names(df))
 if (length(missing_req) > 0) {
   stop("Missing required variables:\n- ", paste(missing_req, collapse = "\n- "))
@@ -40,12 +54,10 @@ if (length(missing_req) > 0) {
 
 # Build running variable + sample restrictions
 df <- df %>%
-  mutate(gustav = suppressWarnings(as.integer(as.character(gustav)))) %>%
   filter(!is.na(distance_gustav_km), distance_gustav_km != 0) %>%  # exclude exact cutoff
-  filter(!is.na(gustav)) %>%
   mutate(x = distance_gustav_km) %>%
   filter(!is.na(x)) %>%
-  filter(abs(x) <= 200)  # symmetric window within +/- 200 km
+  filter(abs(x) <= 200)
 
 if (sum(df$x < 0) == 0 || sum(df$x > 0) == 0) {
   stop("No support on one side of the cutoff for x within +/-200 km.")
@@ -130,7 +142,7 @@ is_hist_layer <- function(layer) {
   tryCatch({
     g <- layer$geom
     if (is.null(g)) return(FALSE)
-    class(g)[1] %in% c("GeomBar", "GeomCol")
+    class(g)[1] %in% c("GeomBar", "GeomCol", "GeomHistogram", "GeomRect")
   }, error = function(e) FALSE)
 }
 
