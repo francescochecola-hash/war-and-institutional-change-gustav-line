@@ -13,15 +13,14 @@ gc()
 # ----------------------------
 required_packages <- unique(c(
   "here","fs","tidyverse","sf","rdrobust","rddensity","fixest",
-  "haven","tools","fuzzyjoin","stringdist","broom","sandwich","lmtest","ggnewscale"
+  "haven","tools","fuzzyjoin","stringdist","broom","sandwich",
+  "lmtest", "ggplot2", "ggnewscale"
 ))
 
 new_packages <- required_packages[!(required_packages %in% installed.packages()[, "Package"])]
 if (length(new_packages)) install.packages(new_packages)
 
 invisible(lapply(required_packages, library, character.only = TRUE))
-
-cat("Project root detected by here(): ./\n")
 
 # ----------------------------
 # 2. Save console output to log
@@ -31,6 +30,7 @@ log_file <- here("results", "run_all_log.txt")
 sink(log_file, split = TRUE)
 on.exit(sink(), add = TRUE)
 
+cat("Project root detected by here(): ./\n")
 cat("\nLog file:", fs::path_rel(log_file, here()), "\n\n")
 
 # ----------------------------
