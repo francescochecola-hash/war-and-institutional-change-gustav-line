@@ -21,8 +21,7 @@ if (length(new_packages)) install.packages(new_packages)
 
 invisible(lapply(required_packages, library, character.only = TRUE))
 
-cat("Project root detected by here():\n")
-print(here())
+cat("Project root detected by here(): ./\n")
 
 # ----------------------------
 # 2. Save console output to log
@@ -32,7 +31,7 @@ log_file <- here("results", "run_all_log.txt")
 sink(log_file, split = TRUE)
 on.exit(sink(), add = TRUE)
 
-cat("\nLog file:", log_file, "\n\n")
+cat("\nLog file:", fs::path_rel(log_file, here()), "\n\n")
 
 # ----------------------------
 # 3. Create folders
@@ -56,11 +55,13 @@ scripts <- list.files(
 scripts <- sort(scripts)
 
 for (script in scripts) {
-  cat("Running:", script, "\n")
+  rel <- fs::path_rel(script, here())
+  cat("Running:", rel, "\n")
+  
   tryCatch(
     source(script, local = .GlobalEnv),
     error = function(e) {
-      message("\nERROR in: ", script)
+      message("\nERROR in: ", rel)
       stop(e)
     }
   )
